@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard — Eddyforge</title>
+  <link rel="icon" type="image/png" href="eddyforge-logo.png">
+  <link rel="stylesheet" href="style.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <style>
+    /* ── ADMIN LAYOUT ── */
+    .admin-wrap {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 0;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-2);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      z-index: 200;
+      transition: transform .3s ease;
+    }
+
+    .sidebar-header {
+      padding: 24px 24px 20px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .sidebar-logo {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      border: 2px solid var(--cyan);
+      background: var(--bg-card);
+      overflow: hidden;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px var(--cyan-dim);
+    }
+    .sidebar-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+
+    .sidebar-brand {
+      font-family: var(--body);
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #fff;
+      letter-spacing: -.02em;
+      line-height: 1;
+    }
+    .sidebar-brand small {
+      display: block;
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--cyan);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    .sidebar-nav {
+      padding: 20px 16px;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-section-label {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--muted);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      padding: 0 10px;
+      margin: 16px 0 8px;
+    }
+    .sidebar-section-label:first-child { margin-top: 0; }
+
+    .sidebar-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      color: var(--muted);
+      text-decoration: none;
+      font-size: .9rem;
+      font-weight: 500;
+      transition: background .2s, color .2s;
+      cursor: pointer;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      margin-bottom: 2px;
+    }
+    .sidebar-link:hover { background: rgba(255,255,255,.05); color: var(--text); }
+    .sidebar-link.active { background: var(--cyan-dim); color: var(--cyan); }
+    .sidebar-link i { font-size: 1rem; flex-shrink: 0; width: 18px; text-align: center; }
+
+    .sidebar-footer {
+      padding: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .admin-badge {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 12px;
+    }
+    .admin-badge-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--cyan);
+      flex-shrink: 0;
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .admin-badge-text {
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text);
+    }
+    .admin-badge-text small {
+      display: block;
+      color: var(--muted);
+      font-size: .65rem;
+    }
+
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      background: none;
+      border: 1px solid rgba(239,68,68,.2);
+      color: #f87171;
+      font-size: .875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background .2s, border-color .2s;
+    }
+    .logout-btn:hover { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.4); }
+
+    /* Main content */
+    .admin-main {
+      margin-left: 260px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .admin-topbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(6,8,16,.9);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-title {
+      font-family: var(--body);
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+    }
+    .topbar-title span { color: var(--muted); font-weight: 400; font-size: .875rem; margin-left: 8px; }
+
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .topbar-visit {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--muted);
+      text-decoration: none;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      transition: color .2s, border-color .2s;
+    }
+    .topbar-visit:hover { color: var(--cyan); border-color: var(--border-h); }
+
+    /* Sidebar mobile toggle */
+    .sidebar-toggle {
+      display: none;
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 8px;
+      padding: 7px 10px;
+      cursor: pointer;
+      font-size: 1.1rem;
+    }
+
+    /* Dashboard panels */
+    .admin-content {
+      padding: 32px;
+    }
+
+    .panel { display: none; }
+    .panel.active { display: block; }
+
+    /* Stats row */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      transition: border-color .2s;
+    }
+    .stat-card:hover { border-color: var(--border-h); }
+
+    .stat-icon {
+      width: 44px; height: 44px;
+      border-radius: 10px;
+      background: var(--cyan-dim);
+      display: grid;
+      place-items: center;
+      font-size: 1.2rem;
+      color: var(--cyan);
+      flex-shrink: 0;
+    }
+
+    .stat-value {
+      font-family: var(--body);
+      font-weight: 800;
+      font-size: 1.6rem;
+      color: #fff;
+      line-height: 1;
+    }
+    .stat-label {
+      font-family: var(--mono);
+      font-size: .68rem;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* Section headers */
+    .section-hd {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .section-hd h2 {
+      font-family: var(--body);
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      letter-spacing: -.02em;
+    }
+    .section-hd p {
+      font-size: .83rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Admin table */
+    .admin-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .admin-table th {
+      font-family: var(--mono);
+      font-size: .65rem;
+      color: var(--muted);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      text-align: left;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .admin-table td {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+      color: var(--text);
+      vertical-align: middle;
+    }
+    .admin-table tr:last-child td { border-bottom: none; }
+    .admin-table tr:hover td { background: rgba(255,255,255,.02); }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: .68rem;
+      padding: 3px 10px;
+      border-radius: 50px;
+      background: var(--cyan-dim);
+      color: var(--cyan);
+      border: 1px solid rgba(0,214,255,.2);
+    }
+
+    .action-btn {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--muted);
+      padding: 5px 10px;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: color .2s, border-color .2s;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .action-btn:hover { color: var(--cyan); border-color: var(--border-h); }
+    .action-btn.danger:hover { color: #f87171; border-color: rgba(239,68,68,.4); }
+
+    /* Info card */
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    /* Edit form */
+    .edit-form { display: flex; flex-direction: column; gap: 16px; }
+    .edit-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 640px) { .edit-row { grid-template-columns: 1fr; } }
+
+    .save-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--cyan);
+      color: var(--bg);
+      border: none;
+      border-radius: 50px;
+      padding: 11px 24px;
+      font-family: var(--body);
+      font-weight: 700;
+      font-size: .875rem;
+      cursor: pointer;
+      transition: box-shadow .25s, transform .2s;
+    }
+    .save-btn:hover { box-shadow: 0 0 30px var(--cyan-glow); transform: translateY(-1px); }
+
+    /* Toast */
+    .toast {
+      position: fixed;
+      bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: var(--bg-card);
+      border: 1px solid var(--border-h);
+      border-radius: 50px;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cyan);
+      font-size: .875rem;
+      font-weight: 500;
+      z-index: 9999;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      white-space: nowrap;
+      box-shadow: 0 8px 32px rgba(0,0,0,.4);
+    }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Quick links */
+    .quick-links {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+    }
+    .quick-link {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px 16px;
+      text-decoration: none;
+      color: var(--muted);
+      font-size: .85rem;
+      font-weight: 500;
+      transition: border-color .2s, color .2s, transform .2s;
+      text-align: center;
+      cursor: pointer;
+    }
+    .quick-link:hover { border-color: var(--border-h); color: var(--cyan); transform: translateY(-3px); }
+    .quick-link i { font-size: 1.6rem; color: var(--cyan); }
+
+    /* Mobile sidebar overlay */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,.6);
+      z-index: 199;
+    }
+
+    @media (max-width: 900px) {
+      .sidebar { transform: translateX(-100%); }
+      .sidebar.open { transform: translateX(0); }
+      .sidebar-overlay.show { display: block; }
+      .admin-main { margin-left: 0; }
+      .sidebar-toggle { display: flex; align-items: center; }
+      .admin-content { padding: 20px; }
+      .admin-topbar { padding: 0 20px; }
+    }
+  </style>
+</head>
+<body>
+<script>
+  // Auth guard — redirect to login if not authenticated
+  if (sessionStorage.getItem('et_admin_auth') !== 'granted') {
+    window.location.replace('login.html');
+  }
+</script>
+
+<!-- Sidebar overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="admin-wrap">
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <img src="eddyforge-logo.png" alt="Eddyforge">
+      </div>
+      <div class="sidebar-brand">
+        Eddyforge
+        <small>Admin Panel</small>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-section-label">Main</div>
+      <button class="sidebar-link active" data-panel="dashboard">
+        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+      </button>
+      <button class="sidebar-link" data-panel="projects">
+        <i class="bi bi-layers-fill"></i> Projects
+      </button>
+      <button class="sidebar-link" data-panel="services">
+        <i class="bi bi-briefcase-fill"></i> Services
+      </button>
+      <button class="sidebar-link" data-panel="profile">
+        <i class="bi bi-person-fill"></i> Profile Info
+      </button>
+
+      <div class="sidebar-section-label">Portfolio Pages</div>
+      <a class="sidebar-link" href="index.html" target="_blank">
+        <i class="bi bi-house"></i> Home <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i>
+      </a>
+      <a class="sidebar-link" href="about.html" target="_blank">
+        <i class="bi bi-info-circle"></i> About <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i>
+      </a>
+      <a class="sidebar-link" href="services.html" target="_blank">
+        <i class="bi bi-gear"></i> Services <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i>
+      </a>
+      <a class="sidebar-link" href="projects.html" target="_blank">
+        <i class="bi bi-code-square"></i> Projects <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i>
+      </a>
+      <a class="sidebar-link" href="contact.html" target="_blank">
+        <i class="bi bi-envelope"></i> Contact <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="admin-badge">
+        <div class="admin-badge-dot"></div>
+        <div class="admin-badge-text">
+          <span id="adminUsername">eddyforge_admin</span>
+          <small>Superuser · Full Access</small>
+        </div>
+      </div>
+      <button class="logout-btn" id="logoutBtn">
+        <i class="bi bi-box-arrow-left"></i> Sign Out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── MAIN CONTENT ── -->
+  <main class="admin-main">
+
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <button class="sidebar-toggle" id="sidebarToggle">
+          <i class="bi bi-list"></i>
+        </button>
+        <div class="topbar-title" id="topbarTitle">
+          Dashboard <span>/ Overview</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <a href="index.html" target="_blank" class="topbar-visit">
+          <i class="bi bi-box-arrow-up-right"></i> View Site
+        </a>
+      </div>
+    </div>
+
+    <div class="admin-content">
+
+      <!-- ══ PANEL: DASHBOARD ══ -->
+      <div class="panel active" id="panel-dashboard">
+
+        <div class="stats-grid reveal">
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-layers-fill"></i></div>
+            <div>
+              <div class="stat-value">2</div>
+              <div class="stat-label">Projects</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div>
+            <div>
+              <div class="stat-value">4</div>
+              <div class="stat-label">Services</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-globe"></i></div>
+            <div>
+              <div class="stat-value">Live</div>
+              <div class="stat-label">Vercel Status</div>
+            </div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon"><i class="bi bi-shield-check-fill"></i></div>
+            <div>
+              <div class="stat-value">ON</div>
+              <div class="stat-label">Admin Session</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div class="section-hd reveal">
+          <div>
+            <h2>Quick Actions</h2>
+            <p>Jump to any section of your portfolio dashboard</p>
+          </div>
+        </div>
+        <div class="quick-links reveal" style="margin-bottom:32px;">
+          <div class="quick-link" data-panel="projects">
+            <i class="bi bi-layers-fill"></i>
+            Manage Projects
+          </div>
+          <div class="quick-link" data-panel="services">
+            <i class="bi bi-briefcase-fill"></i>
+            Edit Services
+          </div>
+          <div class="quick-link" data-panel="profile">
+            <i class="bi bi-person-badge-fill"></i>
+            Update Profile
+          </div>
+          <a class="quick-link" href="contact.html" target="_blank">
+            <i class="bi bi-chat-dots-fill"></i>
+            Contact Page
+          </a>
+        </div>
+
+        <!-- Deployment info -->
+        <div class="section-hd reveal">
+          <div>
+            <h2>Deployment</h2>
+            <p>Your portfolio is live on Vercel</p>
+          </div>
+        </div>
+        <div class="info-card reveal">
+          <div style="padding:20px 24px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;">
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Platform</div>
+              <div style="font-weight:600;color:#fff;font-size:.95rem;">Vercel (Static)</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Stack</div>
+              <div style="font-weight:600;color:#fff;font-size:.95rem;">HTML · CSS · JS</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Status</div>
+              <div style="display:flex;align-items:center;gap:6px;">
+                <span style="width:7px;height:7px;background:var(--cyan);border-radius:50%;display:block;animation:blink 2s infinite;"></span>
+                <span style="color:var(--cyan);font-weight:600;font-size:.95rem;">Deployed</span>
+              </div>
+            </div>
+            <div style="margin-left:auto;">
+              <a href="https://vercel.com/dashboard" target="_blank" class="action-btn">
+                <i class="bi bi-box-arrow-up-right"></i> Vercel Dashboard
+              </a>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ══ PANEL: PROJECTS ══ -->
+      <div class="panel" id="panel-projects">
+        <div class="section-hd">
+          <div>
+            <h2>Projects</h2>
+            <p>Manage the projects shown on your portfolio</p>
+          </div>
+        </div>
+
+        <div class="info-card reveal" style="margin-bottom:24px;">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>Project Name</th>
+                <th>Tech Stack</th>
+                <th>GitHub</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div style="font-weight:600;color:#fff;">University Resource Booking (URBS)</div>
+                  <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Institutional resource allocation & scheduling</div>
+                </td>
+                <td><span class="tag"><i class="bi bi-filetype-py"></i> Python / Django</span></td>
+                <td>
+                  <a href="https://github.com/Edujoew/University-Resource-Booking-System-URBS" target="_blank" class="action-btn">
+                    <i class="bi bi-github"></i> Repo
+                  </a>
+                </td>
+                <td>
+                  <a href="projects.html" target="_blank" class="action-btn">
+                    <i class="bi bi-eye"></i> View
+                  </a>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div style="font-weight:600;color:#fff;">Smart Rent Manager</div>
+                  <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Property management with billing & analytics</div>
+                </td>
+                <td><span class="tag"><i class="bi bi-stack"></i> Full Stack</span></td>
+                <td>
+                  <a href="https://github.com/Edujoew/Smart-Rent-manager" target="_blank" class="action-btn">
+                    <i class="bi bi-github"></i> Repo
+                  </a>
+                </td>
+                <td>
+                  <a href="projects.html" target="_blank" class="action-btn">
+                    <i class="bi bi-eye"></i> View
+                  </a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-card reveal" style="padding:24px;">
+          <div style="font-family:var(--mono);font-size:.68rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">
+            <i class="bi bi-info-circle"></i> &nbsp;How to add a new project
+          </div>
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.75;">
+            Since the site is static on Vercel, adding a new project means editing <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">projects.html</code> and pushing to your connected Git repository. Vercel auto-deploys on every push.
+          </p>
+          <div style="margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="https://github.com/Edujoew" target="_blank" class="save-btn" style="font-size:.82rem;padding:9px 18px;">
+              <i class="bi bi-github"></i> Open GitHub
+            </a>
+            <a href="https://vercel.com/dashboard" target="_blank" class="action-btn" style="padding:9px 18px;">
+              <i class="bi bi-cloud-arrow-up"></i> Vercel Deploys
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ PANEL: SERVICES ══ -->
+      <div class="panel" id="panel-services">
+        <div class="section-hd">
+          <div>
+            <h2>Services</h2>
+            <p>Your offered services listed on the site</p>
+          </div>
+        </div>
+
+        <div class="info-card reveal">
+          <table class="admin-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Service</th>
+                <th>Key Technologies</th>
+                <th>Page</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="tag">01</span></td>
+                <td>
+                  <div style="font-weight:600;color:#fff;">E-commerce Development</div>
+                  <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Custom stores, payment gateways, inventory</div>
+                </td>
+                <td style="font-family:var(--mono);font-size:.78rem;color:var(--muted);">Django · M-Pesa · Stripe</td>
+                <td><a href="services.html" target="_blank" class="action-btn"><i class="bi bi-eye"></i> View</a></td>
+              </tr>
+              <tr>
+                <td><span class="tag">02</span></td>
+                <td>
+                  <div style="font-weight:600;color:#fff;">Corporate Web Solutions</div>
+                  <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Portals, dashboards, branded presence</div>
+                </td>
+                <td style="font-family:var(--mono);font-size:.78rem;color:var(--muted);">Full Stack · PostgreSQL · Auth</td>
+                <td><a href="services.html" target="_blank" class="action-btn"><i class="bi bi-eye"></i> View</a></td>
+              </tr>
+              <tr>
+                <td><span class="tag">03</span></td>
+                <td>
+                  <div style="font-weight:600;color:#fff;">Custom Software Apps</div>
+                  <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Booking, rental, resource management systems</div>
+                </td>
+                <td style="font-family:var(--mono);font-size:.78rem;color:var(--muted);">Python · REST APIs · Deployment</td>
+                <td><a href="services.html" target="_blank" class="action-btn"><i class="bi bi-eye"></i> View</a></td>
+              </tr>
+              <tr>
+                <td><span class="tag">04</span></td>
+                <td>
+                  <div style="font-weight:600;color:#fff;">UI / UX Design & Frontend</div>
+                  <div style="font-size:.78rem;color:var(--muted);margin-top:2px;">Responsive interfaces, design systems</div>
+                </td>
+                <td style="font-family:var(--mono);font-size:.78rem;color:var(--muted);">HTML/CSS · JS · Bootstrap</td>
+                <td><a href="services.html" target="_blank" class="action-btn"><i class="bi bi-eye"></i> View</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="info-card reveal" style="padding:24px;margin-top:20px;">
+          <div style="font-family:var(--mono);font-size:.68rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;">
+            <i class="bi bi-pencil-square"></i> &nbsp;Edit Services
+          </div>
+          <p style="color:var(--muted);font-size:.9rem;line-height:1.75;">
+            To update service descriptions or add a new one, edit <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">services.html</code> in your repo and push — Vercel will redeploy automatically.
+          </p>
+        </div>
+      </div>
+
+      <!-- ══ PANEL: PROFILE ══ -->
+      <div class="panel" id="panel-profile">
+        <div class="section-hd">
+          <div>
+            <h2>Profile Info</h2>
+            <p>Your personal details shown across the portfolio</p>
+          </div>
+        </div>
+
+        <div class="info-card reveal" style="padding:28px;">
+          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;">
+            Current Information
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:20px;">
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Full Name</div>
+              <div style="color:#fff;font-weight:600;">Johnny Edwards</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Brand</div>
+              <div style="color:var(--cyan);font-weight:600;">Eddyforge</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Location</div>
+              <div style="color:#fff;font-weight:600;">Kericho, Kenya</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">Email</div>
+              <div style="color:#fff;font-weight:600;">eddytech451@gmail.com</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">WhatsApp</div>
+              <div style="color:#fff;font-weight:600;">+254 703 817 789</div>
+            </div>
+            <div>
+              <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;margin-bottom:4px;">GitHub</div>
+              <div style="color:#fff;font-weight:600;">github.com/edujoew</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-card reveal" style="padding:28px;margin-top:20px;">
+          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;">
+            <i class="bi bi-shield-lock"></i> &nbsp;Change Admin Password
+          </div>
+          <p style="color:var(--muted);font-size:.88rem;line-height:1.75;margin-bottom:20px;">
+            To change your admin password, generate a new SHA-256 hash and update the <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">ADMIN_PASSWORD_HASH</code> in <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">login.html</code>.
+          </p>
+
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:16px;">
+            <div style="font-family:var(--mono);font-size:.65rem;color:var(--muted);margin-bottom:8px;">Current credentials</div>
+            <div style="font-family:var(--mono);font-size:.82rem;color:var(--text);">
+              Username: <span style="color:var(--cyan);">eddyforge_admin</span><br>
+              Password: <span style="color:var(--cyan);">Eddyforge@Admin2026</span>
+              <span style="color:var(--muted);font-size:.72rem;display:block;margin-top:4px;">⚠ Change this password after first login</span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="https://emn178.github.io/online-tools/sha256.html" target="_blank" class="save-btn" style="font-size:.82rem;padding:9px 18px;">
+              <i class="bi bi-hash"></i> SHA-256 Generator
+            </a>
+            <a href="https://github.com/Edujoew" target="_blank" class="action-btn" style="padding:9px 18px;">
+              <i class="bi bi-github"></i> Edit on GitHub
+            </a>
+          </div>
+        </div>
+
+        <!-- Social links -->
+        <div class="info-card reveal" style="padding:24px;margin-top:20px;">
+          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;">
+            Social &amp; Links
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;">
+            <a href="https://github.com/edujoew" target="_blank" class="action-btn" style="padding:10px 16px;">
+              <i class="bi bi-github"></i> GitHub
+            </a>
+            <a href="https://linkedin.com/in/Johnny-Edwards" target="_blank" class="action-btn" style="padding:10px 16px;">
+              <i class="bi bi-linkedin"></i> LinkedIn
+            </a>
+            <a href="https://wa.me/254703817789" target="_blank" class="action-btn" style="padding:10px 16px;">
+              <i class="bi bi-whatsapp"></i> WhatsApp
+            </a>
+            <a href="mailto:eddytech451@gmail.com" class="action-btn" style="padding:10px 16px;">
+              <i class="bi bi-envelope"></i> Email
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </main>
+</div>
+
+<!-- Toast notification -->
+<div class="toast" id="toast">
+  <i class="bi bi-check-circle-fill"></i>
+  <span id="toastMsg">Done!</span>
+</div>
+
+<script>
+  // ── Set admin username in sidebar ──
+  const user = sessionStorage.getItem('et_admin_user') || 'eddyforge_admin';
+  document.getElementById('adminUsername').textContent = user;
+
+  // ── Panel navigation ──
+  const panelTitles = {
+    dashboard: { title: 'Dashboard', sub: '/ Overview' },
+    projects:  { title: 'Projects',  sub: '/ Manage' },
+    services:  { title: 'Services',  sub: '/ Manage' },
+    profile:   { title: 'Profile',   sub: '/ Settings' },
+  };
+
+  function switchPanel(name) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.sidebar-link[data-panel]').forEach(l => l.classList.remove('active'));
+
+    const panel = document.getElementById('panel-' + name);
+    if (panel) {
+      panel.classList.add('active');
+      // Trigger reveals
+      panel.querySelectorAll('.reveal').forEach((el, i) => {
+        el.classList.remove('visible');
+        setTimeout(() => el.classList.add('visible'), i * 80);
+      });
+    }
+
+    document.querySelectorAll(`[data-panel="${name}"]`).forEach(el => el.classList.add('active'));
+
+    const info = panelTitles[name] || { title: name, sub: '' };
+    document.getElementById('topbarTitle').innerHTML =
+      `${info.title} <span>${info.sub}</span>`;
+
+    // Close mobile sidebar
+    closeSidebar();
+  }
+
+  document.querySelectorAll('[data-panel]').forEach(el => {
+    el.addEventListener('click', () => switchPanel(el.dataset.panel));
+  });
+
+  // Initial reveal
+  setTimeout(() => {
+    document.querySelectorAll('#panel-dashboard .reveal').forEach((el, i) => {
+      setTimeout(() => el.classList.add('visible'), i * 100);
+    });
+  }, 100);
+
+  // ── Mobile sidebar ──
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    sidebar.classList.toggle('open');
+    overlay.classList.toggle('show');
+  });
+
+  function closeSidebar() {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('show');
+  }
+  overlay.addEventListener('click', closeSidebar);
+
+  // ── Logout ──
+  document.getElementById('logoutBtn').addEventListener('click', () => {
+    sessionStorage.removeItem('et_admin_auth');
+    sessionStorage.removeItem('et_admin_user');
+    window.location.href = 'login.html';
+  });
+
+  // ── Toast helper ──
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2800);
+  }
+</script>
+</body>
+</html>
