@@ -1,0 +1,104 @@
+{
+  "profile": {
+    "name": "Johnny Edwards",
+    "brand": "Eddyforge",
+    "location": "Kericho, Kenya",
+    "email": "eddytech451@gmail.com",
+    "whatsapp": "+254 703 817 789",
+    "whatsappLink": "https://wa.me/254703817789",
+    "github": "https://github.com/edujoew",
+    "linkedin": "https://linkedin.com/in/Johnny-Edwards"
+  },
+  "stats": {
+    "yearsBuilding": 2,
+    "remotePercent": 100
+  },
+  "services": [
+    {
+      "icon": "bi-cart3",
+      "title": "E-commerce Development",
+      "description": "High-conversion online stores with integrated payment systems and inventory management.",
+      "longDescription": "Custom online stores designed for conversion. I integrate payment gateways (M-Pesa, Stripe, PayPal), build inventory management systems, automate order processing, and deliver mobile-first storefronts that load fast and convert well.",
+      "tech": "Django \u00b7 M-Pesa \u00b7 Stripe",
+      "tags": ["Django", "Payment APIs", "Inventory Systems", "Mobile-First"]
+    },
+    {
+      "icon": "bi-shield-check",
+      "title": "Corporate Web Solutions",
+      "description": "Scalable, secure web architecture designed for corporate reliability and growth.",
+      "longDescription": "Professional websites and web platforms for businesses \u2014 built for authority, reliability, and scalability. Includes company portals, admin dashboards, internal tools, and branded digital presence that projects trust.",
+      "tech": "Full Stack \u00b7 PostgreSQL \u00b7 Auth",
+      "tags": ["Full Stack", "Admin Dashboards", "PostgreSQL", "Auth & Security"]
+    },
+    {
+      "icon": "bi-code-slash",
+      "title": "Custom Software Apps",
+      "description": "Bespoke software solutions built to solve your unique operational challenges.",
+      "longDescription": "Bespoke web applications built around your specific operational workflow. Booking systems, rental management platforms, resource allocation tools, reporting systems \u2014 I scope, build, and deploy custom software end to end.",
+      "tech": "Python \u00b7 REST APIs \u00b7 Deployment",
+      "tags": ["Python", "REST APIs", "Custom Logic", "Deployment"]
+    },
+    {
+      "icon": "bi-palette2",
+      "title": "UI / UX Design & Frontend",
+      "description": "Responsive interfaces and design systems that feel premium and load fast.",
+      "longDescription": "Visually polished, responsive interfaces that users actually enjoy using. Clean design systems, smooth interactions, and pixel-perfect layouts \u2014 whether a landing page or a complex web app dashboard.",
+      "tech": "HTML/CSS \u00b7 JS \u00b7 Bootstrap",
+      "tags": ["HTML/CSS", "JavaScript", "Bootstrap", "Responsive"]
+    }
+  ],
+  "projects": [
+    {
+      "title": "University Resource Booking System (URBS)",
+      "shortTitle": "University Resource Booking (URBS)",
+      "badge": "Python / Django",
+      "badgeIcon": "bi-filetype-py",
+      "description": "A comprehensive institutional management platform designed to streamline how universities allocate and schedule shared resources \u2014 from labs and lecture halls to equipment. Built for multi-user environments with admin control, student-facing booking UI, and real-time availability tracking.",
+      "shortDescription": "A comprehensive system for institutional resource allocation and scheduling.",
+      "highlights": [
+        "Role-based access (Admin, Staff, Student)",
+        "Real-time availability calendar",
+        "Email notifications & booking history",
+        "Django backend + PostgreSQL"
+      ],
+      "repo": "https://github.com/Edujoew/University-Resource-Booking-System-URBS",
+      "icon": "bi-calendar-check",
+      "iconLabel": "Resource Management System",
+      "accent": "0,214,255",
+      "imageFirst": false
+    },
+    {
+      "title": "Smart Rent Manager",
+      "shortTitle": "Smart Rent Manager",
+      "badge": "Full Stack",
+      "badgeIcon": "bi-stack",
+      "description": "A next-generation property management platform built for modern landlords and property managers. Automates rent collection, generates billing statements, tracks tenant records, and surfaces analytics via a clean dashboard \u2014 reducing manual overhead significantly.",
+      "shortDescription": "Property management with automated billing, tenant tracking, and analytics.",
+      "highlights": [
+        "Automated billing & invoicing",
+        "Tenant dashboard & records",
+        "Analytics & reporting",
+        "Full stack Django + JS"
+      ],
+      "repo": "https://github.com/Edujoew/Smart-Rent-manager",
+      "icon": "bi-house-gear",
+      "iconLabel": "Property Management Platform",
+      "accent": "255,179,0",
+      "imageFirst": true
+    }
+  ],
+  "testimonials": [
+    {
+      "quote": "Eddyforge transformed our institutional workflow. The URBS platform's clean UI and coding precision made management seamless.",
+      "initials": "JD",
+      "name": "Jenkins Daisy",
+      "role": "Project Coordinator"
+    },
+    {
+      "quote": "Working with John was efficient. He bridged the gap between technical backend and smooth user experience perfectly.",
+      "initials": "AK",
+      "name": "Allan K.",
+      "role": "Operations Manager"
+    }
+  ]
+}
