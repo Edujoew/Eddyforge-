@@ -378,7 +378,7 @@
     }
 
     // If already logged in, go straight to admin
-    if (sessionStorage.getItem('et_admin_auth') === 'granted') {
+    if (sessionStorage.getItem('ef_admin_auth') === 'granted') {
       window.location.href = 'admin.html';
     }
 
@@ -435,8 +435,8 @@
 
       if (uHash === ADMIN_USERNAME_HASH && pHash === ADMIN_PASSWORD_HASH) {
         successEl.classList.add('show');
-        sessionStorage.setItem('et_admin_auth', 'granted');
-        sessionStorage.setItem('et_admin_user', username);
+        sessionStorage.setItem('ef_admin_auth', 'granted');
+        sessionStorage.setItem('ef_admin_user', username);
         setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
       } else {
         showLoading(false);
