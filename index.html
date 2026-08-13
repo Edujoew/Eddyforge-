@@ -10,7 +10,10 @@
 </head>
 <body>
 
-  <a href="https://wa.me/254703817789" class="hire-btn"><i class="bi bi-whatsapp"></i> Hire Me</a>
+  <!-- LIVE CYBER MATRIX STREAM BACKGROUND CANVAS -->
+  <canvas id="live-bg-canvas"></canvas>
+
+  <a href="https://wa.me/254703817789" class="hire-btn" data-cms="profile.whatsappLink" data-cms-attr="href"><i class="bi bi-whatsapp"></i> Hire Me</a>
 
   <nav class="nav-wrap">
     <a class="nav-logo" href="index.html">
@@ -61,15 +64,15 @@
 
       <div style="display:flex;gap:48px;margin-top:72px;flex-wrap:wrap;">
         <div>
-          <div style="font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;">3<span style="color:var(--cyan);">+</span></div>
+          <div style="font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;"><span id="stat-projects">3</span><span style="color:var(--cyan);">+</span></div>
           <div style="font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">Projects Shipped</div>
         </div>
         <div>
-          <div style="font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;">2<span style="color:var(--cyan);">+</span></div>
+          <div style="font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;"><span id="stat-years">2</span><span style="color:var(--cyan);">+</span></div>
           <div style="font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">Years Building</div>
         </div>
         <div>
-          <div style="font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;">100<span style="color:var(--cyan);">%</span></div>
+          <div style="font-family:var(--display);font-weight:800;font-size:2rem;color:#fff;"><span id="stat-remote">100</span><span style="color:var(--cyan);">%</span></div>
           <div style="font-family:var(--mono);font-size:.72rem;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;">Remote Ready</div>
         </div>
       </div>
@@ -108,26 +111,7 @@
         <h2 class="section-title">Core Services</h2>
         <p class="section-sub">End-to-end digital solutions built for performance, scale, and brand authority.</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
-        <div class="tech-card reveal">
-          <div style="width:52px;height:52px;border-radius:12px;background:var(--cyan-dim);display:grid;place-items:center;font-size:1.4rem;color:var(--cyan);margin-bottom:24px;"><i class="bi bi-cart3"></i></div>
-          <div style="font-family:var(--display);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:8px;">E-commerce</div>
-          <p style="color:var(--muted);font-size:.93rem;">High-conversion online stores with integrated payment systems and inventory management.</p>
-          <span style="position:absolute;bottom:20px;right:20px;font-family:var(--mono);font-size:.7rem;color:var(--border-h);">01</span>
-        </div>
-        <div class="tech-card reveal">
-          <div style="width:52px;height:52px;border-radius:12px;background:var(--cyan-dim);display:grid;place-items:center;font-size:1.4rem;color:var(--cyan);margin-bottom:24px;"><i class="bi bi-shield-check"></i></div>
-          <div style="font-family:var(--display);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:8px;">Corporate Solutions</div>
-          <p style="color:var(--muted);font-size:.93rem;">Scalable, secure web architecture designed for corporate reliability and growth.</p>
-          <span style="position:absolute;bottom:20px;right:20px;font-family:var(--mono);font-size:.7rem;color:var(--border-h);">02</span>
-        </div>
-        <div class="tech-card reveal">
-          <div style="width:52px;height:52px;border-radius:12px;background:var(--cyan-dim);display:grid;place-items:center;font-size:1.4rem;color:var(--cyan);margin-bottom:24px;"><i class="bi bi-code-slash"></i></div>
-          <div style="font-family:var(--display);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:8px;">Custom Apps</div>
-          <p style="color:var(--muted);font-size:.93rem;">Bespoke software solutions built to solve your unique operational challenges.</p>
-          <span style="position:absolute;bottom:20px;right:20px;font-family:var(--mono);font-size:.7rem;color:var(--border-h);">03</span>
-        </div>
-      </div>
+      <div id="services-preview" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;"></div>
       <div style="text-align:center;margin-top:48px;" class="reveal">
         <a href="services.html" class="btn-outline-c">See All Services <i class="bi bi-arrow-right"></i></a>
       </div>
@@ -142,20 +126,7 @@
         <h2 class="section-title">Latest Projects</h2>
         <p class="section-sub">Real-world systems shipped from concept to deployment.</p>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;">
-        <div class="tech-card reveal" style="display:flex;flex-direction:column;gap:16px;">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,214,255,.1);border:1px solid rgba(0,214,255,.25);color:var(--cyan);font-family:var(--mono);font-size:.7rem;padding:4px 12px;border-radius:50px;width:fit-content;"><i class="bi bi-filetype-py"></i> Python / Django</div>
-          <div style="font-family:var(--display);font-weight:700;font-size:1.2rem;color:#fff;">University Resource Booking (URBS)</div>
-          <p style="color:var(--muted);font-size:.92rem;flex:1;">A comprehensive system for institutional resource allocation and scheduling.</p>
-          <a href="projects.html" class="project-link" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:gap .2s;">View Project <i class="bi bi-arrow-right"></i></a>
-        </div>
-        <div class="tech-card reveal" style="display:flex;flex-direction:column;gap:16px;">
-          <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(0,214,255,.1);border:1px solid rgba(0,214,255,.25);color:var(--cyan);font-family:var(--mono);font-size:.7rem;padding:4px 12px;border-radius:50px;width:fit-content;"><i class="bi bi-stack"></i> Full Stack</div>
-          <div style="font-family:var(--display);font-weight:700;font-size:1.2rem;color:#fff;">Smart Rent Manager</div>
-          <p style="color:var(--muted);font-size:.92rem;flex:1;">Property management with automated billing, tenant tracking, and analytics.</p>
-          <a href="projects.html" class="project-link" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;transition:gap .2s;">View Project <i class="bi bi-arrow-right"></i></a>
-        </div>
-      </div>
+      <div id="projects-teaser" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;"></div>
       <div style="text-align:center;margin-top:48px;" class="reveal">
         <a href="projects.html" class="btn-outline-c"><i class="bi bi-layers"></i> All Projects</a>
       </div>
@@ -169,30 +140,7 @@
         <div class="section-label"><i class="bi bi-chat-quote-fill"></i> Trust</div>
         <h2 class="section-title">What Clients Say</h2>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
-        <div class="tech-card reveal" style="position:relative;">
-          <i class="bi bi-quote" style="font-size:2.5rem;color:var(--cyan);opacity:.12;position:absolute;top:24px;right:24px;"></i>
-          <p style="font-style:italic;color:var(--text);font-size:1rem;line-height:1.8;margin-bottom:28px;">"Eddyforge transformed our institutional workflow. The URBS platform's clean UI and coding precision made management seamless."</p>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <div style="width:42px;height:42px;border-radius:50%;background:var(--cyan-dim);color:var(--cyan);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:.85rem;flex-shrink:0;">JD</div>
-            <div>
-              <span style="font-weight:700;color:#fff;display:block;">Jenkins Daisy</span>
-              <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Project Coordinator</span>
-            </div>
-          </div>
-        </div>
-        <div class="tech-card reveal" style="position:relative;">
-          <i class="bi bi-quote" style="font-size:2.5rem;color:var(--cyan);opacity:.12;position:absolute;top:24px;right:24px;"></i>
-          <p style="font-style:italic;color:var(--text);font-size:1rem;line-height:1.8;margin-bottom:28px;">"Working with John was efficient. He bridged the gap between technical backend and smooth user experience perfectly."</p>
-          <div style="display:flex;align-items:center;gap:14px;">
-            <div style="width:42px;height:42px;border-radius:50%;background:var(--cyan-dim);color:var(--cyan);display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:.85rem;flex-shrink:0;">AK</div>
-            <div>
-              <span style="font-weight:700;color:#fff;display:block;">Allan K.</span>
-              <span style="font-family:var(--mono);font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;">Operations Manager</span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <div id="testimonials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;"></div>
     </div>
   </section>
 
@@ -219,6 +167,286 @@
     <div class="footer-copy">© 2026 Eddyforge</div>
   </footer>
 
+  <script src="content.js"></script>
   <script src="nav.js"></script>
+
+  <!-- DYNAMIC HOLOGRAPHIC HORIZON BACKGROUND SCRIPT -->
+  <script>
+    (function() {
+      const canvas = document.getElementById('live-bg-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d', { alpha: true });
+
+      const CYAN = [0, 214, 255];
+      const GOLD = [255, 179, 0];
+
+      let width, height, dpr;
+      let vx, vy;               // vanishing point (core position)
+      let rafId = null;
+      let running = true;
+      let t = 0;
+      let lastTime = null;
+
+      const prefersReducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      // glitch scan state
+      let nextGlitchAt = 4 + Math.random() * 5;
+      let glitchTimer = 0;
+      let glitchBars = [];
+
+      function resize() {
+        dpr = Math.min(window.devicePixelRatio || 1, 2);
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = Math.floor(width * dpr);
+        canvas.height = Math.floor(height * dpr);
+        canvas.style.width = width + 'px';
+        canvas.style.height = height + 'px';
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+        vx = width * 0.5;
+        vy = height * 0.58;
+      }
+
+      // ── AURORA SKY ──────────────────────────────────────────
+      function drawAurora() {
+        const bands = [
+          { color: CYAN, amp: 34, freq: 0.0016, speed: 0.10, yOff: 0.16, alpha: 0.10 },
+          { color: GOLD, amp: 22, freq: 0.0022, speed: -0.07, yOff: 0.24, alpha: 0.06 },
+          { color: CYAN, amp: 46, freq: 0.0011, speed: 0.055, yOff: 0.34, alpha: 0.07 }
+        ];
+
+        for (let b = 0; b < bands.length; b++) {
+          const band = bands[b];
+          const [r, g, bl] = band.color;
+          const baseY = height * band.yOff;
+
+          ctx.beginPath();
+          ctx.moveTo(0, baseY);
+          for (let x = 0; x <= width; x += 16) {
+            const y = baseY + Math.sin(x * band.freq + t * band.speed) * band.amp
+                             + Math.sin(x * band.freq * 2.3 - t * band.speed * 1.6) * (band.amp * 0.35);
+            ctx.lineTo(x, y);
+          }
+          ctx.lineTo(width, 0);
+          ctx.lineTo(0, 0);
+          ctx.closePath();
+
+          const grad = ctx.createLinearGradient(0, 0, 0, baseY + band.amp);
+          grad.addColorStop(0, `rgba(${r}, ${g}, ${bl}, 0)`);
+          grad.addColorStop(1, `rgba(${r}, ${g}, ${bl}, ${band.alpha})`);
+          ctx.fillStyle = grad;
+          ctx.fill();
+        }
+      }
+
+      // ── PERSPECTIVE ENERGY FLOOR ────────────────────────────
+      function drawFloor() {
+        const floorTop = vy;
+        const floorBottom = height;
+        const halfWidthAtBottom = width * 0.9;
+
+        // radiating verticals converging on the vanishing point
+        ctx.lineWidth = 1;
+        const railCount = 15;
+        for (let i = -railCount; i <= railCount; i++) {
+          const frac = i / railCount;
+          const xBottom = vx + frac * halfWidthAtBottom;
+          const xTop = vx + frac * 6; // nearly converge at horizon
+          const distFade = 1 - Math.min(1, Math.abs(frac));
+          const [r, g, bl] = CYAN;
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${bl}, ${0.05 + distFade * 0.05})`;
+          ctx.beginPath();
+          ctx.moveTo(xTop, floorTop);
+          ctx.lineTo(xBottom, floorBottom);
+          ctx.stroke();
+        }
+
+        // scrolling cross-lines, denser & brighter near horizon (perspective)
+        const laneCount = 26;
+        const cycle = prefersReducedMotion ? 0 : (t * 0.16) % 1;
+        for (let i = 0; i < laneCount; i++) {
+          let z = (i / laneCount + cycle) % 1; // 0 = far (horizon), 1 = near (bottom)
+          const ease = z * z; // ease-in for perspective spacing
+          const y = floorTop + (floorBottom - floorTop) * ease;
+          const halfW = halfWidthAtBottom * ease;
+          const alpha = (1 - z) * 0.22 + 0.03;
+          const isGoldLine = i % 7 === 0;
+          const [r, g, bl] = isGoldLine ? GOLD : CYAN;
+
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${bl}, ${alpha.toFixed(3)})`;
+          ctx.lineWidth = 0.6 + ease * 1.6;
+          ctx.beginPath();
+          ctx.moveTo(vx - halfW, y);
+          ctx.lineTo(vx + halfW, y);
+          ctx.stroke();
+        }
+
+        // horizon glow line
+        const hgrad = ctx.createLinearGradient(vx - width * 0.5, floorTop, vx + width * 0.5, floorTop);
+        hgrad.addColorStop(0, 'rgba(0, 214, 255, 0)');
+        hgrad.addColorStop(0.5, 'rgba(0, 214, 255, 0.5)');
+        hgrad.addColorStop(1, 'rgba(0, 214, 255, 0)');
+        ctx.strokeStyle = hgrad;
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(vx - width * 0.5, floorTop);
+        ctx.lineTo(vx + width * 0.5, floorTop);
+        ctx.stroke();
+
+        // fade the floor into the page background toward the bottom so content stays legible
+        const fadeGrad = ctx.createLinearGradient(0, floorTop, 0, floorBottom);
+        fadeGrad.addColorStop(0, 'rgba(6, 8, 16, 0)');
+        fadeGrad.addColorStop(1, 'rgba(6, 8, 16, 0.9)');
+        ctx.fillStyle = fadeGrad;
+        ctx.fillRect(0, floorTop, width, floorBottom - floorTop);
+      }
+
+      // ── ENERGY CORE ─────────────────────────────────────────
+      function drawCore() {
+        const pulse = 0.85 + 0.15 * Math.sin(t * 1.4);
+        const coreR = (width < 700 ? 34 : 46) * pulse;
+
+        // outer soft glow
+        const outerR = coreR * 4.2;
+        const glow = ctx.createRadialGradient(vx, vy, 0, vx, vy, outerR);
+        glow.addColorStop(0, 'rgba(0, 214, 255, 0.35)');
+        glow.addColorStop(0.4, 'rgba(0, 214, 255, 0.12)');
+        glow.addColorStop(1, 'rgba(0, 214, 255, 0)');
+        ctx.fillStyle = glow;
+        ctx.beginPath();
+        ctx.arc(vx, vy, outerR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // orbiting rings (elliptical, rotating, dashed)
+        const rings = [
+          { rx: coreR * 2.1, ry: coreR * 0.62, speed: 0.5, dash: [10, 10], color: CYAN, alpha: 0.55 },
+          { rx: coreR * 2.7, ry: coreR * 0.85, speed: -0.32, dash: [4, 14], color: GOLD, alpha: 0.4 }
+        ];
+        for (let i = 0; i < rings.length; i++) {
+          const ring = rings[i];
+          const [r, g, bl] = ring.color;
+          ctx.save();
+          ctx.translate(vx, vy);
+          ctx.rotate(t * ring.speed);
+          ctx.setLineDash(ring.dash);
+          ctx.lineDashOffset = -t * 40 * (ring.speed > 0 ? 1 : -1);
+          ctx.strokeStyle = `rgba(${r}, ${g}, ${bl}, ${ring.alpha})`;
+          ctx.lineWidth = 1.4;
+          ctx.beginPath();
+          ctx.ellipse(0, 0, ring.rx, ring.ry, 0, 0, Math.PI * 2);
+          ctx.stroke();
+          ctx.restore();
+        }
+        ctx.setLineDash([]);
+
+        // orbiting particles riding the rings
+        for (let i = 0; i < 3; i++) {
+          const ring = rings[i % rings.length];
+          const ang = t * ring.speed * 1.6 + (i * Math.PI * 2) / 3;
+          const px = vx + Math.cos(ang) * ring.rx;
+          const py = vy + Math.sin(ang) * ring.ry;
+          const [r, g, bl] = ring.color;
+          ctx.fillStyle = `rgba(${r}, ${g}, ${bl}, 0.9)`;
+          ctx.beginPath();
+          ctx.arc(px, py, 2.4, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // bright core body
+        const coreGrad = ctx.createRadialGradient(vx, vy, 0, vx, vy, coreR);
+        coreGrad.addColorStop(0, 'rgba(255, 255, 255, 0.95)');
+        coreGrad.addColorStop(0.35, 'rgba(0, 214, 255, 0.85)');
+        coreGrad.addColorStop(1, 'rgba(0, 214, 255, 0)');
+        ctx.fillStyle = coreGrad;
+        ctx.beginPath();
+        ctx.arc(vx, vy, coreR, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ── GLITCH SCAN OVERLAY ─────────────────────────────────
+      function updateGlitch(dt) {
+        glitchTimer += dt;
+        if (glitchTimer >= nextGlitchAt && glitchBars.length === 0) {
+          const barCount = 2 + Math.floor(Math.random() * 3);
+          glitchBars = [];
+          for (let i = 0; i < barCount; i++) {
+            glitchBars.push({
+              y: Math.random() * height,
+              h: 2 + Math.random() * 10,
+              offset: (Math.random() - 0.5) * 40,
+              color: Math.random() < 0.5 ? CYAN : GOLD
+            });
+          }
+          glitchTimer = 0;
+          nextGlitchAt = 5 + Math.random() * 6;
+          glitchBars.life = 0.14;
+        }
+        if (glitchBars.length) {
+          glitchBars.life -= dt;
+          if (glitchBars.life <= 0) glitchBars = [];
+        }
+      }
+
+      function drawGlitch() {
+        if (!glitchBars.length) return;
+        for (let i = 0; i < glitchBars.length; i++) {
+          const bar = glitchBars[i];
+          const [r, g, bl] = bar.color;
+          ctx.fillStyle = `rgba(${r}, ${g}, ${bl}, 0.10)`;
+          ctx.fillRect(bar.offset, bar.y, width, bar.h);
+        }
+      }
+
+      function draw(dt) {
+        t += dt;
+        if (!prefersReducedMotion) updateGlitch(dt);
+
+        // trailing fade
+        ctx.fillStyle = 'rgba(6, 8, 16, 0.5)';
+        ctx.fillRect(0, 0, width, height);
+
+        drawAurora();
+        drawFloor();
+        drawCore();
+        drawGlitch();
+
+        if (running) rafId = requestAnimationFrame(loop);
+      }
+
+      function loop(now) {
+        if (lastTime === null) lastTime = now;
+        let dt = (now - lastTime) / 1000;
+        dt = Math.min(dt, 0.05);
+        lastTime = now;
+        draw(dt);
+      }
+
+      function onVisibilityChange() {
+        if (document.hidden) {
+          running = false;
+          if (rafId) cancelAnimationFrame(rafId);
+        } else if (!running) {
+          running = true;
+          lastTime = null;
+          rafId = requestAnimationFrame(loop);
+        }
+      }
+
+      let resizeTimeout;
+      window.addEventListener('resize', () => {
+        clearTimeout(resizeTimeout);
+        resizeTimeout = setTimeout(resize, 120);
+      });
+
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      resize();
+      ctx.fillStyle = '#060810';
+      ctx.fillRect(0, 0, width, height);
+      rafId = requestAnimationFrame(loop);
+    })();
+  </script>
 </body>
-</html>
+  </html>
+  
