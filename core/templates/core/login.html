@@ -1,11 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Login — Eddyforge</title>
-  <link rel="icon" type="image/png" href="eddyforge-logo.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="{% static 'core/eddyforge-logo.png' %}">
+  <link rel="stylesheet" href="{% static 'core/style.css' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
   <style>
     .login-page {
@@ -295,7 +296,7 @@
       <!-- Logo -->
       <div class="login-logo">
         <div class="login-logo-avatar">
-          <img src="eddyforge-logo.png" alt="Eddyforge">
+          <img src="{% static 'core/eddyforge-logo.png' %}" alt="Eddyforge">
         </div>
         <span class="login-logo-text">Eddyforge</span>
       </div>
@@ -360,7 +361,7 @@
       </div>
     </div>
 
-    <a href="index.html" class="back-link">
+    <a href="{% url 'core:home' %}" class="back-link">
       <i class="bi bi-arrow-left"></i> Back to portfolio
     </a>
   </div>
@@ -379,7 +380,7 @@
 
     // If already logged in, go straight to admin
     if (sessionStorage.getItem('ef_admin_auth') === 'granted') {
-      window.location.href = 'admin.html';
+      window.location.href = "{% url 'core:admin' %}";
     }
 
     const loginBtn  = document.getElementById('loginBtn');
@@ -437,7 +438,7 @@
         successEl.classList.add('show');
         sessionStorage.setItem('ef_admin_auth', 'granted');
         sessionStorage.setItem('ef_admin_user', username);
-        setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+        setTimeout(() => { window.location.href = "{% url 'core:admin' %}"; }, 1000);
       } else {
         showLoading(false);
         document.getElementById('errorMsg').textContent = 'Invalid credentials. Please try again.';

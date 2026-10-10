@@ -1,11 +1,12 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Admin Dashboard — Eddyforge</title>
-  <link rel="icon" type="image/png" href="eddyforge-logo.png">
-  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="{% static 'core/eddyforge-logo.png' %}">
+  <link rel="stylesheet" href="{% static 'core/style.css' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
   <style>
     .admin-wrap { display: flex; min-height: 100vh; padding-top: 0; }
@@ -180,7 +181,7 @@
 <body>
 <script>
   if (sessionStorage.getItem('ef_admin_auth') !== 'granted') {
-    window.location.replace('login.html');
+    window.location.replace("{% url 'core:login' %}");
   }
 </script>
 
@@ -190,7 +191,7 @@
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <div class="sidebar-logo"><img src="eddyforge-logo.png" alt="Eddyforge"></div>
+      <div class="sidebar-logo"><img src="{% static 'core/eddyforge-logo.png' %}" alt="Eddyforge"></div>
       <div class="sidebar-brand">Eddyforge<small>Admin Panel</small></div>
     </div>
 
@@ -204,11 +205,11 @@
       <button class="sidebar-link" data-panel="sitedata"><i class="bi bi-hdd-network-fill"></i> Site Data</button>
 
       <div class="sidebar-section-label">Portfolio Pages</div>
-      <a class="sidebar-link" href="index.html" target="_blank"><i class="bi bi-house"></i> Home <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="about.html" target="_blank"><i class="bi bi-info-circle"></i> About <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="services.html" target="_blank"><i class="bi bi-gear"></i> Services <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="projects.html" target="_blank"><i class="bi bi-code-square"></i> Projects <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="contact.html" target="_blank"><i class="bi bi-envelope"></i> Contact <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:home' %}" target="_blank"><i class="bi bi-house"></i> Home <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:about' %}" target="_blank"><i class="bi bi-info-circle"></i> About <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:services' %}" target="_blank"><i class="bi bi-gear"></i> Services <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:projects' %}" target="_blank"><i class="bi bi-code-square"></i> Projects <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:contact' %}" target="_blank"><i class="bi bi-envelope"></i> Contact <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
     </nav>
 
     <div class="sidebar-footer">
@@ -228,7 +229,7 @@
         <div class="topbar-title" id="topbarTitle">Dashboard <span>/ Overview</span></div>
       </div>
       <div class="topbar-actions">
-        <a href="index.html" target="_blank" class="topbar-visit"><i class="bi bi-box-arrow-up-right"></i> View Site</a>
+        <a href="{% url 'core:home' %}" target="_blank" class="topbar-visit"><i class="bi bi-box-arrow-up-right"></i> View Site</a>
         <button class="topbar-save" id="topbarSave"><i class="bi bi-cloud-arrow-up-fill"></i> <span class="label-full">Save Changes</span></button>
       </div>
     </div>
@@ -385,7 +386,7 @@
       } catch (e) { /* fall through to fetch */ }
     }
     try {
-      const res = await fetch('content.json', { cache: 'no-store' });
+      const res = await fetch("{% static 'core/content.json' %}", { cache: 'no-store' });
       siteData = await res.json();
       dataSource = 'published';
     } catch (e) {
@@ -739,7 +740,7 @@
   document.getElementById('logoutBtn').addEventListener('click', () => {
     sessionStorage.removeItem('ef_admin_auth');
     sessionStorage.removeItem('ef_admin_user');
-    window.location.href = 'login.html';
+    window.location.href = "{% url 'core:login' %}";
   });
 
   function showToast(msg) {

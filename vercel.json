@@ -1,0 +1,23 @@
+{
+  "buildCommand": "python manage.py collectstatic --noinput",
+  "builds": [
+    {
+      "src": "eddyforge_project/wsgi.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "core/static/**",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/static/(.*)",
+      "dest": "/core/static/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "eddyforge_project/wsgi.py"
+    }
+  ]
+}

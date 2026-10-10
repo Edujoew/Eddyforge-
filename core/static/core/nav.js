@@ -48,12 +48,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ── 3. NAV ACTIVE LINK STATE ──
   // Checks the URL and highlights the current page link
-  const path = window.location.pathname;
-  const page = path.split('/').pop() || 'index.html';
+  const page = window.location.pathname.split('/').filter(Boolean).pop() || '';
   
   document.querySelectorAll('.nav-links a').forEach(a => {
-    const href = a.getAttribute('href');
-    if (href === page || (page === '' && href === 'index.html')) {
+    const linkPage = new URL(a.href).pathname.split('/').filter(Boolean).pop() || '';
+    if (linkPage === page) {
       a.classList.add('active');
     }
   });

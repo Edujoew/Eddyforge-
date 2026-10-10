@@ -6,6 +6,8 @@
    attributes. Safe to include everywhere.
 ══════════════════════════════════════ */
 
+const CMS_CONTENT_URL = new URL('content.json', document.currentScript.src);
+
 function cmsResolve(obj, path) {
   return path.split('.').reduce((o, k) => (o == null ? undefined : o[k]), obj);
 }
@@ -30,7 +32,7 @@ function renderServicesGrid(data) {
           ${(s.tags || []).map(t => `<span style="font-family:var(--mono);font-size:.7rem;color:var(--cyan);background:var(--cyan-dim);padding:4px 10px;border-radius:6px;">${t}</span>`).join('')}
         </div>
       </div>
-      <a href="contact.html" class="btn-ghost" style="white-space:nowrap;flex-shrink:0;">Get Quote <i class="bi bi-arrow-right"></i></a>
+      <a href="/contact/" class="btn-ghost" style="white-space:nowrap;flex-shrink:0;">Get Quote <i class="bi bi-arrow-right"></i></a>
     </div>
   `).join('');
 }
@@ -85,7 +87,7 @@ function renderProjectsTeaser(data) {
       <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(${p.accent},.1);border:1px solid rgba(${p.accent},.25);color:rgb(${p.accent});font-family:var(--mono);font-size:.7rem;padding:4px 12px;border-radius:50px;width:fit-content;">${cmsIcon(p.badgeIcon)} ${p.badge}</div>
       <div style="font-family:var(--display);font-weight:700;font-size:1.2rem;color:#fff;">${p.shortTitle}</div>
       <p style="color:var(--muted);font-size:.92rem;flex:1;">${p.shortDescription}</p>
-      <a href="projects.html" class="project-link" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">View Project <i class="bi bi-arrow-right"></i></a>
+      <a href="/projects/" class="project-link" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">View Project <i class="bi bi-arrow-right"></i></a>
     </div>
   `).join('');
 }
@@ -143,7 +145,7 @@ async function loadCms() {
     if (override) {
       data = JSON.parse(override);
     } else {
-      const res = await fetch('content.json', { cache: 'no-store' });
+      const res = await fetch(CMS_CONTENT_URL, { cache: 'no-store' });
       data = await res.json();
     }
     renderServicesGrid(data);
