@@ -5,9 +5,8 @@ from pathlib import PurePosixPath
 from urllib.parse import urlsplit
 
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
-from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator

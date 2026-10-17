@@ -1,19 +1,21 @@
 {% extends "core/base.html" %}
 
 {% block content %}
-<section class="section portal-section">
-  <div class="container">
-    <div class="section-heading">
-      <p class="eyebrow">Client Portal</p>
-      <h1>Your projects</h1>
-      <p>Project progress and resources shared with you by Eddyforge.</p>
-    </div>
+<header class="page-hero">
+  <div class="page-hero-inner">
+    <p class="page-hero-eyebrow">Client Portal</p>
+    <h1 class="page-hero-title">Your <span>projects</span></h1>
+    <p class="page-hero-sub">Project progress and resources shared with you by Eddyforge.</p>
+  </div>
+</header>
+<section class="portal-section">
+  <div class="container-c">
 
     <div class="portal-actions">
       <span>Signed in as {{ request.user.get_username }}</span>
       <form method="post" action="{% url 'core:portal_logout' %}">
         {% csrf_token %}
-        <button class="btn btn-outline" type="submit">Sign out</button>
+        <button class="btn-primary-c" type="submit">Sign out</button>
       </form>
     </div>
 
@@ -21,7 +23,7 @@
       <div class="portal-project-grid">
         {% for project in projects %}
           <article class="portal-card">
-            <p class="eyebrow">{{ project.get_status_display }}</p>
+            <p class="page-hero-eyebrow">{{ project.get_status_display }}</p>
             <h2><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h2>
             {% if project.summary %}<p>{{ project.summary }}</p>{% endif %}
             <p class="portal-meta">{{ project.milestones.count }} milestone{{ project.milestones.count|pluralize }}</p>
