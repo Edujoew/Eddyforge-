@@ -1,6 +1,5 @@
 import json
 import re
-from copy import deepcopy
 from math import ceil
 from pathlib import PurePosixPath
 from urllib.parse import urlsplit
@@ -284,30 +283,74 @@ def service_detail(request, slug):
 
 
 def resume(request):
-    from core.data.resume import RESUME_DATA
-
-    resume_data = deepcopy(RESUME_DATA)
-    published_projects = Project.objects.filter(is_published=True)
-    if published_projects.exists():
-        resume_data["projects"] = [
+    resume_data = {
+        "name": "Johnny Edwards",
+        "role": "Full-Stack Web Developer",
+        "location": "Kericho, Kenya",
+        "summary": "Full-Stack Web Developer with 2+ years of hands-on experience building, testing, and deploying robust web applications and backend services. Proficient in Python, Django, PostgreSQL, JavaScript, and M-Pesa API integration.",
+        "skills": [
             {
-                "title": project.title,
-                "slug": project.slug,
-                "summary": project.short_description or project.description,
-                "stack": project.stack_list,
-                "repository": project.repo,
+                "group": "Backend & APIs",
+                "items": ["Python", "Django", "Django REST Framework", "PostgreSQL", "SQLite", "M-Pesa API"]
+            },
+            {
+                "group": "Frontend & UI/UX",
+                "items": ["HTML5", "CSS3", "JavaScript (ES6+)", "Bootstrap", "Responsive Layouts"]
+            },
+            {
+                "group": "DevOps & Tools",
+                "items": ["Git & GitHub", "Visual Studio Code", "PyCharm", "Vercel", "WhiteNoise"]
             }
-            for project in published_projects
+        ],
+        "projects": [
+            {
+                "title": "University Resource and Equipment Booking System (URBS)",
+                "summary": "Full-stack academic resource booking web application with secure authentication, database management, and automated payment workflows via M-Pesa API.",
+                "stack": ["Django", "PostgreSQL", "Bootstrap", "M-Pesa API"],
+                "repository": "https://github.com"
+            },
+            {
+                "title": "Eddyforge Development Platform",
+                "summary": "Production-ready developer portfolio and client acquisition platform featuring contact inquiry persistence and dynamic rendering.",
+                "stack": ["Python", "Django", "Vercel", "JavaScript"],
+                "repository": "https://github.com"
+            }
+        ],
+        "experience": [
+            {
+                "title": "Full-Stack Web Developer — Eddyforge / Eddytech (2024 – Present)",
+                "description": "Architected full-stack web solutions, built RESTful backend services with Django, managed database schemas, and delivered responsive production websites."
+            }
+        ],
+        "education": [
+            {
+                "name": "Bachelor of Education (Arts)",
+                "description": "University of Kabianga — Specialization in English, Literature, and Educational Frameworks with active institutional leadership."
+            }
+        ],
+        "certifications": [],
+        "links": [
+            {"label": "Email: eddychannels254@gmail.com", "url": "mailto:eddychannels254@gmail.com"},
+            {"label": "GitHub", "url": "https://github.com"}
         ]
+    }
 
-    resume_root = (settings.BASE_DIR / "core" / "static" / "core").resolve()
-    resume_file = (resume_root / settings.RESUME_PDF).resolve()
-    has_resume_pdf = (
-        resume_root in resume_file.parents
-        and resume_file.is_file()
-        and resume_file.suffix.lower() == ".pdf"
-    )
-    resume_pdf_path = "core/" + settings.RESUME_PDF.replace("\\", "/")
+    resume_projects = Project.objects.filter(is_published=True)
+    
+    resume_pdf_setting = getattr(settings, 'RESUME_PDF', None)
+    has_resume_pdf = False
+    resume_pdf_path = ""
+    
+    if resume_pdf_setting:
+        resume_root = (settings.BASE_DIR / "core" / "static" / "core").resolve()
+        resume_file = (resume_root / resume_pdf_setting).resolve()
+        has_resume_pdf = bool(
+            resume_root in resume_file.parents
+            and resume_file.is_file()
+            and resume_file.suffix.lower() == ".pdf"
+        )
+        resume_pdf_path = "core/" + resume_pdf_setting.replace("\\", "/")
+
     return render(
         request,
         "core/resume.html",
@@ -318,11 +361,11 @@ def resume(request):
                 resume_data["summary"],
             ),
             "resume_data": resume_data,
+            "resume_projects": resume_projects,
             "resume_pdf_path": resume_pdf_path,
             "has_resume_pdf": has_resume_pdf,
         },
     )
-
 
 def privacy(request):
     return render(

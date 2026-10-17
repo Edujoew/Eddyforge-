@@ -75,6 +75,11 @@
 - Smoke script passed 27 GET-only checks on the local temporary deployment, including project/service/lab details, expected 404, and login redirects.
 - All 16 Django tests, `manage.py check`, `makemigrations --check --dry-run`, and `collectstatic --noinput` passed. Production `check --deploy` reports only intentional W005/W008/W021: no HSTS subdomains/preload, and no Django SSL redirect because Vercel terminates HTTPS.
 - Next up: owner configures Neon/Vercel, deploys, reviews the draft and privacy notice, decides the three listed privacy details, and runs the smoke script against the deployed URL.
-- Follow-up application requests: restored a staff-gated `/admin/` link in shared navigation; confirmed the existing `Post` model and Django admin already support editorial CRUD/publishing, so no duplicate `BlogPost` model or migration was introduced.
-- Resume now identifies the owner-provided 2+ years of experience and uses published database projects when available, retaining static resume project data as a no-database-content fallback. The printable web view remains available.
-- Final follow-up checks: 18 tests passed; launch setup `-Local` completed against disposable SQLite; PowerShell 5.1-compatible scripts parsed; no hosted credentials or database were used.
+
+## Follow-up launch and portfolio requests
+
+- Verified Step 1 tooling and documented the exact local PowerShell entry point; Neon setup still requires the owner to enter Neon URLs and account details interactively.
+- Confirmed `Post` already provides the requested dynamic blog content fields and is registered for full Django admin editing/publishing; retained the existing model and RSS/detail routes rather than duplicating article data.
+- Restored a main-navigation link to the permission-protected Django admin.
+- Resume now uses published database projects when available, retains the existing static project fallback before content import, and supports print/save-to-PDF. The owner supplied the 2+ years experience statement; no M-Pesa integration claim was added because the source content does not verify that project.
+- Follow-up verification: all 18 Django tests pass; `manage.py check` passes; `makemigrations --check --dry-run` reports no missing migrations.

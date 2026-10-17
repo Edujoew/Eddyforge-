@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>JSON Formatter | Eddyforge Lab</title>
+  <style>
+    body { background: #060810; color: #fff; font-family: monospace; padding: 20px; margin: 0; }
+    .container { max-width: 800px; margin: 0 auto; }
+    textarea { width: 100%; height: 180px; background: #111827; color: #00d6ff; border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 6px; font-family: monospace; box-sizing: border-box; resize: vertical; }
+    button { background: #00d6ff; color: #060810; border: none; padding: 10px 20px; font-weight: bold; border-radius: 6px; cursor: pointer; margin-top: 10px; }
+    pre { background: #111827; border: 1px solid rgba(255,255,255,0.1); padding: 15px; border-radius: 6px; overflow-x: auto; color: #34d399; }
+    .error { color: #f87171; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>JSON Formatter & Validator</h2>
+    <p style="color: #9ca3af; font-size: 0.9rem;">Paste raw JSON or API response data below to format it instantly.</p>
+    <textarea id="jsonInput" placeholder='{"name": "Johnny", "role": "Developer"}'></textarea>
+    <br>
+    <button onclick="formatJson()">Format JSON</button>
+    <h3>Output:</h3>
+    <pre id="jsonOutput">Ready...</pre>
+  </div>
+
+  <script>
+    function formatJson() {
+      const input = document.getElementById('jsonInput').value;
+      const output = document.getElementById('jsonOutput');
+      try {
+        const parsed = JSON.parse(input);
+        output.textContent = JSON.stringify(parsed, null, 2);
+        output.classList.remove('error');
+      } catch (e) {
+        output.textContent = 'Invalid JSON: ' + e.message;
+        output.classList.add('error');
+      }
+    }
+  </script>
+</body>
+</html>

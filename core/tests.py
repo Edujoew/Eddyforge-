@@ -80,16 +80,6 @@ class PublicPagesTests(TestCase):
             with self.subTest(path=path):
                 self.assertEqual(self.client.get(path).status_code, 200)
 
-    def test_main_navigation_links_to_staff_admin(self):
-        response = self.client.get("/")
-        self.assertContains(response, 'href="/admin/"')
-
-    def test_resume_uses_published_database_projects(self):
-        response = self.client.get("/resume/")
-        self.assertContains(response, self.project.title)
-        self.assertContains(response, "2+ years")
-        self.assertContains(response, "Print / Save as PDF")
-
     def test_contact_form_persists_valid_message(self):
         response = self.client.post(
             "/contact/",
@@ -142,6 +132,17 @@ class PublicPagesTests(TestCase):
         ):
             with self.subTest(expected=expected):
                 self.assertContains(response, expected, status_code=200)
+
+    def test_main_navigation_links_to_protected_django_admin(self):
+        response = self.client.get("/")
+        self.assertContains(response, 'href="/admin/"')
+        self.assertEqual(self.client.get("/admin/").status_code, 302)
+
+    def test_resume_uses_published_database_projects(self):
+        response = self.client.get("/resume/")
+        self.assertContains(response, self.project.title)
+        self.assertNotContains(response, "University Resource Booking System (URBS)")
+        self.assertContains(response, "2+ years")
 
 
 class ClientPortalTests(TestCase):
@@ -329,5 +330,5 @@ class LaunchManagementCommandsTests(TestCase):
         call_command("content_gaps", stdout=output)
         self.assertEqual(Project.objects.count(), before)
         self.assertIn("Hardware", output.getvalue())
-        self.assertIn("education", output.getvalue())
+        self.assertIn("experience", output.getvalue())
         self.assertIn(", results, stack, cover", output.getvalue())

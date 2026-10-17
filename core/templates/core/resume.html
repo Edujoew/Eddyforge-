@@ -1,34 +1,153 @@
 {% extends "core/base.html" %}
 {% load static %}
+{% block title %}Resume | Johnny Edwards — Eddyforge{% endblock %}
+{% block meta_description %}Professional resume of Johnny Edwards, Full-Stack Web Developer with 2+ years of experience.{% endblock %}
+
 {% block content %}
-<div class="page-wrap resume-page">
-  <header class="page-hero">
-    <div class="page-hero-inner">
-      <p class="page-hero-eyebrow">Resume</p>
-      <h1 class="page-hero-title">{{ resume_data.name }} <span>— {{ resume_data.role }}</span></h1>
-      <p class="page-hero-sub">{{ resume_data.location }} · Available for remote collaboration</p>
-      <div class="resume-actions">
-        <button type="button" class="btn-primary-c" onclick="window.print()">Print / Save as PDF <i class="bi bi-printer" aria-hidden="true"></i></button>
-        {% if has_resume_pdf %}<a class="btn-ghost" href="{% static resume_pdf_path %}" download>Download PDF <i class="bi bi-download" aria-hidden="true"></i></a>{% endif %}
-      </div>
+<style>
+  /* Force text visibility and styling specifically for screen and print */
+  .resume-container {
+    background-color: #060810;
+    color: #ffffff;
+    min-height: 100vh;
+    padding: 120px 20px 80px;
+    font-family: inherit;
+  }
+  .resume-card {
+    background: #111827;
+    border: 1px solid rgba(255,255,255,0.1);
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+  }
+  .resume-text-muted { color: #cbd5e0; line-height: 1.6; }
+  .resume-title { color: #00d6ff; font-size: 1.4rem; margin-bottom: 15px; border-left: 4px solid #00d6ff; padding-left: 10px; }
+  .resume-tag { font-family: monospace; font-size: 0.85rem; color: #00d6ff; background: rgba(0,214,255,0.1); padding: 4px 8px; border-radius: 4px; display: inline-block; margin-right: 6px; margin-top: 6px; }
+
+  @media print {
+    body { background: #ffffff !important; color: #000000 !important; }
+    .resume-container { background: #ffffff !important; color: #000000 !important; padding: 20px !important; }
+    .resume-card { background: #f9f9f9 !important; border: 1px solid #ddd !important; color: #000000 !important; }
+    .resume-text-muted { color: #333333 !important; }
+    .resume-title { color: #000000 !important; border-left: 4px solid #000000 !important; }
+    .resume-tag { background: #eee !important; color: #000 !important; border: 1px solid #ccc; }
+    button, nav, footer { display: none !important; }
+  }
+</style>
+
+<div class="resume-container">
+  <div style="max-width: 850px; margin: 0 auto;">
+    
+    <!-- Hero Header -->
+    <div style="border-bottom: 1px solid rgba(0, 214, 255, 0.2); padding-bottom: 30px; margin-bottom: 40px;">
+      <p style="font-family: monospace; color: #00d6ff; text-transform: uppercase; letter-spacing: 0.15em; font-size: 0.85rem; margin-bottom: 10px;">Curriculum Vitae</p>
+      <h1 style="font-size: 3rem; font-weight: 800; color: inherit; margin: 0 0 10px 0;">Johnny Edwards</h1>
+      <p style="font-size: 1.2rem; color: #00d6ff; margin: 0 0 15px 0;">Full-Stack Web Developer & Software Engineer</p>
+      <p style="color: inherit; opacity: 0.8; margin: 0 0 25px 0;">Kericho, Kenya · Available for remote collaboration</p>
+      
+      <button type="button" onclick="window.print()" style="background: #00d6ff; color: #060810; border: none; padding: 12px 24px; font-weight: bold; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;">
+        <i class="bi bi-printer" aria-hidden="true"></i> Print / Save as PDF
+      </button>
     </div>
-  </header>
-  <div class="container-c resume-content">
-    <section class="resume-section"><h2>Summary</h2><p>{{ resume_data.summary }}</p></section>
-    <section class="resume-section"><h2>Skills</h2><div class="resume-skills">{% for group in resume_data.skills %}<div><h3>{{ group.group }}</h3><ul class="tag-list">{% for skill in group.items %}<li>{{ skill }}</li>{% endfor %}</ul></div>{% endfor %}</div></section>
-    {% if resume_data.projects %}
-    <section class="resume-section"><h2>Selected projects</h2>{% for project in resume_data.projects %}<article class="resume-project"><h3><a href="{% url 'core:project_detail' slug=project.slug %}">{{ project.title }}</a></h3><p>{{ project.summary }}</p>{% if project.stack %}<ul class="tag-list">{% for item in project.stack %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}{% if project.repository %}<a href="{{ project.repository }}" target="_blank" rel="noopener noreferrer">Repository <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>{% endif %}</article>{% endfor %}</section>
-    {% endif %}
-    {% if resume_data.experience %}
-    <section class="resume-section"><h2>Experience</h2>{% for item in resume_data.experience %}<article><h3>{{ item.title }}</h3><p>{{ item.description }}</p></article>{% endfor %}</section>
-    {% endif %}
-    {% if resume_data.education %}
-    <section class="resume-section"><h2>Education</h2>{% for item in resume_data.education %}<article><h3>{{ item.name }}</h3><p>{{ item.description }}</p></article>{% endfor %}</section>
-    {% endif %}
-    {% if resume_data.certifications %}
-    <section class="resume-section"><h2>Certifications</h2><ul>{% for item in resume_data.certifications %}<li>{{ item }}</li>{% endfor %}</ul></section>
-    {% endif %}
-    <section class="resume-section resume-contact"><h2>Contact</h2><ul>{% for link in resume_data.links %}<li><a href="{{ link.url }}">{{ link.label }}</a></li>{% endfor %}</ul></section>
+
+    <!-- Summary Section -->
+    <section style="margin-bottom: 40px;">
+      <h2 class="resume-title">Professional Summary</h2>
+      <p class="resume-text-muted" style="font-size: 1.05rem;">
+        Full-Stack Web Developer with 2+ years of hands-on experience building, testing, and deploying robust web applications and backend services. Proficient in Python, Django, PostgreSQL, JavaScript, and M-Pesa API integration, with a strong focus on clean architecture and high-performance user interfaces.
+      </p>
+    </section>
+
+    <!-- Skills Section -->
+    <section style="margin-bottom: 40px;">
+      <h2 class="resume-title">Technical Skills</h2>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px;">
+        
+        <div class="resume-card">
+          <h3 style="color: inherit; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px;">Backend & APIs</h3>
+          <ul class="resume-text-muted" style="margin: 0; padding-left: 20px;">
+            <li>Python & Django</li>
+            <li>Django REST Framework</li>
+            <li>PostgreSQL & SQLite</li>
+            <li>M-Pesa Daraja API</li>
+          </ul>
+        </div>
+
+        <div class="resume-card">
+          <h3 style="color: inherit; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px;">Frontend & UI/UX</h3>
+          <ul class="resume-text-muted" style="margin: 0; padding-left: 20px;">
+            <li>HTML5 & CSS3</li>
+            <li>JavaScript (ES6+)</li>
+            <li>Bootstrap</li>
+            <li>Responsive Design</li>
+          </ul>
+        </div>
+
+        <div class="resume-card">
+          <h3 style="color: inherit; font-size: 1.1rem; margin-top: 0; margin-bottom: 12px;">DevOps & Tools</h3>
+          <ul class="resume-text-muted" style="margin: 0; padding-left: 20px;">
+            <li>Git & GitHub</li>
+            <li>Visual Studio Code</li>
+            <li>PyCharm</li>
+            <li>Vercel & WhiteNoise</li>
+          </ul>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Selected Projects -->
+    <section style="margin-bottom: 40px;">
+      <h2 class="resume-title">Selected Projects</h2>
+      
+      <div class="resume-card">
+        <h3 style="color: inherit; font-size: 1.2rem; margin-top: 0; margin-bottom: 8px;">University Resource and Equipment Booking System (URBS)</h3>
+        <p class="resume-text-muted" style="margin-bottom: 12px;">Full-stack academic resource booking web application featuring secure user authentication, database management, and automated payment workflows via M-Pesa API integration.</p>
+        <div>
+          <span class="resume-tag">Django</span>
+          <span class="resume-tag">PostgreSQL</span>
+          <span class="resume-tag">M-Pesa API</span>
+        </div>
+      </div>
+
+      <div class="resume-card">
+        <h3 style="color: inherit; font-size: 1.2rem; margin-top: 0; margin-bottom: 8px;">Eddyforge Development Platform</h3>
+        <p class="resume-text-muted" style="margin-bottom: 12px;">Production-ready developer portfolio and client acquisition platform featuring contact inquiry persistence, dynamic JSON content management, and deployment pipelines.</p>
+        <div>
+          <span class="resume-tag">Python</span>
+          <span class="resume-tag">Django</span>
+          <span class="resume-tag">Vercel</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Experience -->
+    <section style="margin-bottom: 40px;">
+      <h2 class="resume-title">Experience</h2>
+      <div class="resume-card">
+        <h3 style="color: inherit; font-size: 1.15rem; margin-top: 0; margin-bottom: 6px;">Full-Stack Web Developer — Eddyforge / Eddytech</h3>
+        <p style="font-family: monospace; font-size: 0.85rem; color: #00d6ff; margin-bottom: 12px;">2024 – Present · Kericho, Kenya</p>
+        <p class="resume-text-muted" style="margin: 0;">Architected custom full-stack web solutions, built RESTful backend services with Django, managed database schemas, and delivered high-performance responsive web products for clients.</p>
+      </div>
+    </section>
+
+    <!-- Education -->
+    <section style="margin-bottom: 40px;">
+      <h2 class="resume-title">Education</h2>
+      <div class="resume-card">
+        <h3 style="color: inherit; font-size: 1.15rem; margin-top: 0; margin-bottom: 6px;">Bachelor of Education (Arts)</h3>
+        <p style="font-family: monospace; font-size: 0.85rem; color: #00d6ff; margin-bottom: 12px;">University of Kabianga</p>
+        <p class="resume-text-muted" style="margin: 0;">Specialization in English, Literature, and Educational Frameworks with active institutional leadership and digital media coordination.</p>
+      </div>
+    </section>
+
+    <!-- Contact -->
+    <section>
+      <h2 class="resume-title">Contact & Links</h2>
+      <p class="resume-text-muted" style="margin: 5px 0;">Email: <a href="mailto:eddychannels254@gmail.com" style="color: #00d6ff; text-decoration: none;">eddychannels254@gmail.com</a></p>
+      <p class="resume-text-muted" style="margin: 5px 0;">Location: Kericho, Kenya</p>
+    </section>
+
   </div>
 </div>
 {% endblock %}

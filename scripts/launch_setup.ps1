@@ -163,11 +163,6 @@ try {
         $vercelHost = "eddyforge-test.vercel.app"
         $contactEmail = "launch-test@example.invalid"
         $bookingUrl = ""
-        $env:DJANGO_ALLOWED_HOSTS = "localhost,127.0.0.1"
-        $env:DJANGO_CSRF_TRUSTED_ORIGINS = "http://localhost,http://127.0.0.1"
-        $env:SITE_URL = "http://localhost"
-        $env:CONTACT_EMAIL = $contactEmail
-        $env:BOOKING_URL = ""
     }
     else {
         $directUrl = Normalize-NeonUrl -Value (Read-SecretValue -Prompt "Direct Neon URL (pooler OFF)") -ExpectPooled $false -Label "Direct"
@@ -190,13 +185,6 @@ try {
             }
             Write-Warning "Enter a valid absolute https:// booking URL, or leave it blank."
         }
-        $runtimeHosts = @($domains + @($vercelHost) | Select-Object -Unique)
-        $runtimeCsrfOrigins = @($runtimeHosts | ForEach-Object { "https://$_" })
-        $env:DJANGO_ALLOWED_HOSTS = $runtimeHosts -join ","
-        $env:DJANGO_CSRF_TRUSTED_ORIGINS = $runtimeCsrfOrigins -join ","
-        $env:SITE_URL = "https://$($domains[0])"
-        $env:CONTACT_EMAIL = $contactEmail
-        $env:BOOKING_URL = $bookingUrl
         $env:DIRECT_DATABASE_URL = $directUrl
         $env:DATABASE_URL = $directUrl
     }
