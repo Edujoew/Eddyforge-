@@ -3,13 +3,39 @@
 <div class="page-wrap">
   <header class="page-hero"><div class="page-hero-inner"><p class="page-hero-eyebrow">Privacy</p><h1 class="page-hero-title">Your information, <span>plainly explained</span></h1><p class="page-hero-sub">Last updated: {% now "F j, Y" %}</p></div></header>
   <article class="container-c policy-content">
-    <section><h2>What this site collects</h2><p>If you use the contact form, Eddyforge receives your first and last name, email address, selected service, and project brief. The project inquiry form can also collect your name, email, optional company, project type, budget range, timeline, project description, and reference links. Do not submit confidential information you do not want to share by email.</p></section>
-    <section><h2>Why the information is used</h2><p>The information is used to review and respond to your inquiry, clarify the work you are asking about, and keep a record of project conversations. It is not sold or used for advertising by this site.</p></section>
-    <section><h2>Where it is stored</h2><p>Form submissions are stored in the Django application's configured database. Local development uses SQLite; production should use the hosted database configured for the deployment. The site does not accept file uploads through these forms.</p></section>
-    <section><h2>Cookies and analytics</h2><p>The application uses Django session and CSRF cookies for session handling and form protection. This site does not configure an analytics service. Embedded or linked third-party services may process information under their own policies.</p></section>
-    <section><h2>Third-party services</h2><p>The site is hosted through Vercel. A database provider processes data when a hosted database is configured. If a booking URL is configured, the confirmation page may embed that provider. The frontend also loads assets from Google Fonts, jsDelivr (Bootstrap Icons), and cdnjs (code highlighting). Their services may receive standard browser request data when assets are loaded.</p></section>
-    <section><h2>Access or deletion requests</h2><p>To ask what information is held about your inquiry, or to request its correction or deletion, email <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>. Include enough context to identify the message, but do not send passwords or payment details.</p></section>
-    <p class="policy-note">This page describes the current application configuration and is not a statement of compliance with a particular law. The site owner should review this policy before relying on it.</p>
+    <section>
+      <h2>Information you send</h2>
+      <p>The contact form asks for your first name, last name, email address, service needed, and project brief. The project inquiry form asks for your name, email address, project type, budget range, timeline, and project description; company and reference links are optional. The application records when each submission was created. Project inquiries also receive an internal status, initially “new”, for staff tracking. A hidden anti-spam field is used by the project inquiry form and is not stored.</p>
+      <p>If you have a client portal account, the site also stores account details (username and email), a password hash, and the project information attached to your account. Project information can include a project title, summary, status, milestones, dates, and resource links.</p>
+      <p>Please do not send passwords, payment details, or other sensitive information through an inquiry form.</p>
+    </section>
+    <section>
+      <h2>How information is used</h2>
+      <p>Inquiry details are available to the site operator to review and respond to project requests. Portal details are used to provide account access to the project information shared with that account. The application does not configure analytics or advertising tools.</p>
+    </section>
+    <section>
+      <h2>Storage and access</h2>
+      <p>Application records are stored in the database configured for this deployment. Local development can use SQLite; the deployed site is intended to use hosted PostgreSQL. The application is deployed through Vercel, and the database provider selected by the site operator processes stored records. Staff accounts can view inquiries and manage records through Django administration. Client accounts can view only projects assigned to them.</p>
+      <p>Passwords are handled by Django authentication and stored as password hashes, not as readable passwords. The inquiry forms do not accept file uploads.</p>
+    </section>
+    <section>
+      <h2>Cookies and browser storage</h2>
+      <p>Django may set a session cookie for signed-in portal users and a CSRF cookie to protect form submissions. The browser-side portfolio preview tool can save its local content override in this browser's local storage under <code>eddyforge_content_override</code>. That preview data stays in the browser and is not a server-side publishing mechanism. The application code does not use session storage for authentication.</p>
+    </section>
+    <section>
+      <h2>External services and links</h2>
+      <p>Pages load the Inter font through Google Fonts (<code>fonts.googleapis.com</code> and Google-hosted font files such as <code>fonts.gstatic.com</code>), Bootstrap Icons from jsDelivr (<code>cdn.jsdelivr.net</code>), and code-highlighting assets from cdnjs (<code>cdnjs.cloudflare.com</code>) on article pages. These providers may receive standard browser request information when those assets load. The site also links to WhatsApp, GitHub, and LinkedIn; those services receive information if you follow their links.</p>
+      <p>If a booking URL is configured, the project confirmation page embeds that external booking page. The configured booking provider may receive browser request information and data you enter there. Portfolio content may also link to external project sites or load images from URLs configured by the site operator.</p>
+    </section>
+    <section>
+      <h2>Analytics and retention</h2>
+      <p>No analytics integration is present in the application code. Inquiry and account records remain in the configured database until the site operator removes them. A specific retention period has not been set out here.</p>
+    </section>
+    <section>
+      <h2>Questions or requests</h2>
+      <p>To ask about information held in connection with an inquiry, or to request a correction or deletion, contact <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>. Include enough information to identify the request, but do not send passwords or payment details.</p>
+    </section>
+    <p class="policy-note">This page describes the application's current features and does not make a claim of legal compliance. The site operator should confirm the details and obtain appropriate review before relying on this notice.</p>
   </article>
 </div>
 {% endblock %}

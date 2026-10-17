@@ -13,9 +13,9 @@
 - [x] Phase 2 — Content models, Django admin, migrations, starter data and import command.
 - [x] Phase 3 — Case studies, inquiry flow, server-rendered blog and RSS.
 - [x] Phase 4 — Service landing pages, resume, privacy and custom error pages.
-- [ ] Phase 5 — Uses, now and lab pages with two self-contained demos. (in progress)
-- [ ] Phase 6 — Authenticated client portal and retirement of the browser-side access gate.
-- [ ] Phase 7 — Smoke tests, full verification and handoff documentation.
+- [x] Phase 5 — Uses, now and lab pages with two self-contained demos.
+- [x] Phase 6 — Authenticated client portal and retirement of the browser-side access gate.
+- [x] Phase 7 — Smoke tests, full verification and handoff documentation.
 
 ## Manual steps for me
 
@@ -24,6 +24,7 @@
 - Submit test inquiries through both forms and confirm them in Django admin.
 - Add real project screenshots and a resume PDF; complete project, service, resume, and Now content.
 - Review the unpublished blog draft and privacy policy before publishing.
+- Create client accounts and assign each client project to its account in Django admin; there is no public sign-up.
 - Have the privacy policy reviewed; it is informational, not a claim of legal compliance.
 
 ## Next up
@@ -40,4 +41,40 @@
 - Phase 4 complete: added server-rendered service listings/details, service FAQ support and JSON-LD, reusable process steps, a fact-based resume, privacy notice, sitemap entries, and branded 404/plain 500 templates.
 - Phase 4 assumptions: unknown resume credentials remain empty; PDF download appears only for a configured file within `core/static/core/`; service timing stays scope-dependent when not explicitly provided; privacy text describes configuration without claiming legal compliance.
 - Verification: Django checks and migration state passed; service pages, resume, privacy, service query preselection, and the custom 404 returned expected output in an in-memory database test.
-- Next up: Phase 5 — Uses, Now and Lab pages plus standalone demos.
+- Phase 5 complete: added server-rendered Uses, Now and Lab pages plus two standalone local-only JavaScript tools; static lab demos are shown in sandboxed frames.
+- Phase 5 verification: Django checks and migration-state checks passed; Uses, Now, Lab, and both demo pages returned HTTP 200; demo pages included the expected sandbox attribute.
+- Phase 6 complete: added client projects, milestones, expiring shared links, admin inlines, Django-authenticated portal login/logout/dashboard/details, per-user project scoping, legacy `/login/` redirect, and staff-only `/admin-panel/`. Removed browser-side credential hashes and sessionStorage authorization checks; no public signup was added.
+- Phase 6 verification: portal authentication and user isolation, expired-link filtering, staff restrictions, and POST-only logout passed regression tests.
+- Phase 7 complete: added public-page, form persistence, custom 404, portal authentication/isolation, staff gate, and logout tests; documented routes, environment variables, deployment, onboarding, and operator handoff.
+- Final verification: `manage.py check`, `makemigrations --check --dry-run`, and `manage.py test core.tests` all passed. Tests used Django's in-memory test database; the ignored project `db.sqlite3` was not used or modified.
+
+## Launch prep
+
+### Assumptions
+
+- No Neon/Vercel credentials were supplied or requested; no hosted database or live site was accessed.
+- Launch setup uses the direct Neon connection only for local management commands and the pooled URL only for Vercel runtime configuration. Secrets are process-scoped and clipboard contents are cleared after paste.
+- `-Local` uses a unique temporary SQLite file, fake account data, and no clipboard operation; the file is deleted in `finally`.
+- The Vercel edge handles HTTPS. Django secure redirect stays disabled to avoid proxy redirect loops; HSTS is limited to one day and does not include subdomains or preload.
+- Privacy retention period, controller name, and privacy contact remain owner decisions; the notice makes no legal-compliance claim.
+- Item 3 was exercised against a local temporary server only; no deployed URL was provided.
+
+### Checklist
+
+- [x] Item 1 — Added idempotent `create_client`, portal password change, and read-only `content_gaps`; tested permissions and password updates.
+- [x] Item 2 — Added PowerShell first-run setup with secure prompts, validation, temporary SQLite mode, migrations, starter import, superuser setup, optional client creation, content report, and clipboard cleanup.
+- [x] Item 3 — Added a GET-only live smoke script with status/redirect reporting and tested all discovered public routes against a local temporary server.
+- [x] Item 4 — Production check, static build, secret-pattern scan, and ignore rules reviewed; fake environment and SQLite only.
+- [x] Item 5 — Updated the privacy notice and added `launch/PRIVACY_AUDIT.md` with owner questions and ODPC/legal-review reminder.
+- [x] Item 6 — Added the development-only Pillow dependency and WebP image optimizer; verified dimensions, aspect ratio, transparency, and cleanup using generated test images.
+- [x] Item 7 — Added the concise `LAUNCH.md` workflow and troubleshooting commands.
+
+### Verification and remaining actions
+
+- Launch setup `-Local` completed end-to-end: migrations, content import, superuser creation, counts, and content-gap report; its temporary SQLite database was removed.
+- Smoke script passed 27 GET-only checks on the local temporary deployment, including project/service/lab details, expected 404, and login redirects.
+- All 16 Django tests, `manage.py check`, `makemigrations --check --dry-run`, and `collectstatic --noinput` passed. Production `check --deploy` reports only intentional W005/W008/W021: no HSTS subdomains/preload, and no Django SSL redirect because Vercel terminates HTTPS.
+- Next up: owner configures Neon/Vercel, deploys, reviews the draft and privacy notice, decides the three listed privacy details, and runs the smoke script against the deployed URL.
+- Follow-up application requests: restored a staff-gated `/admin/` link in shared navigation; confirmed the existing `Post` model and Django admin already support editorial CRUD/publishing, so no duplicate `BlogPost` model or migration was introduced.
+- Resume now identifies the owner-provided 2+ years of experience and uses published database projects when available, retaining static resume project data as a no-database-content fallback. The printable web view remains available.
+- Final follow-up checks: 18 tests passed; launch setup `-Local` completed against disposable SQLite; PowerShell 5.1-compatible scripts parsed; no hosted credentials or database were used.

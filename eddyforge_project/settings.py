@@ -9,7 +9,9 @@ SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
     if not DEBUG:
         raise RuntimeError("DJANGO_SECRET_KEY must be set when DJANGO_DEBUG is false.")
-    SECRET_KEY = "django-insecure-eddyforge-development-key-change-before-deployment"
+    from django.core.management.utils import get_random_secret_key
+
+    SECRET_KEY = get_random_secret_key()
 
 ALLOWED_HOSTS = [".vercel.app"]
 ALLOWED_HOSTS.extend(
@@ -121,7 +123,12 @@ LOGIN_URL = "core:portal_login"
 LOGIN_REDIRECT_URL = "core:portal_dashboard"
 LOGOUT_REDIRECT_URL = "core:portal_login"
 
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+SECURE_HSTS_SECONDS = 86400
+SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+SECURE_HSTS_PRELOAD = False
+SECURE_SSL_REDIRECT = False
+
 if not DEBUG:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

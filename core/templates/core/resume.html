@@ -17,7 +17,7 @@
     <section class="resume-section"><h2>Summary</h2><p>{{ resume_data.summary }}</p></section>
     <section class="resume-section"><h2>Skills</h2><div class="resume-skills">{% for group in resume_data.skills %}<div><h3>{{ group.group }}</h3><ul class="tag-list">{% for skill in group.items %}<li>{{ skill }}</li>{% endfor %}</ul></div>{% endfor %}</div></section>
     {% if resume_data.projects %}
-    <section class="resume-section"><h2>Selected projects</h2>{% for project in resume_data.projects %}<article class="resume-project"><h3><a href="{% url 'core:project_detail' slug=project.slug %}">{{ project.title }}</a></h3><p>{{ project.summary }}</p><ul class="tag-list">{% for item in project.stack %}<li>{{ item }}</li>{% endfor %}</ul><a href="{{ project.repository }}" target="_blank" rel="noopener noreferrer">Repository <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></article>{% endfor %}</section>
+    <section class="resume-section"><h2>Selected projects</h2>{% for project in resume_data.projects %}<article class="resume-project"><h3><a href="{% url 'core:project_detail' slug=project.slug %}">{{ project.title }}</a></h3><p>{{ project.summary }}</p>{% if project.stack %}<ul class="tag-list">{% for item in project.stack %}<li>{{ item }}</li>{% endfor %}</ul>{% endif %}{% if project.repository %}<a href="{{ project.repository }}" target="_blank" rel="noopener noreferrer">Repository <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>{% endif %}</article>{% endfor %}</section>
     {% endif %}
     {% if resume_data.experience %}
     <section class="resume-section"><h2>Experience</h2>{% for item in resume_data.experience %}<article><h3>{{ item.title }}</h3><p>{{ item.description }}</p></article>{% endfor %}</section>

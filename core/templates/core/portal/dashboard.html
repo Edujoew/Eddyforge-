@@ -13,6 +13,7 @@
 
     <div class="portal-actions">
       <span>Signed in as {{ request.user.get_username }}</span>
+      <a class="project-card-action" href="{% url 'core:portal_password_change' %}">Change password</a>
       <form method="post" action="{% url 'core:portal_logout' %}">
         {% csrf_token %}
         <button class="btn-primary-c" type="submit">Sign out</button>

@@ -794,6 +794,27 @@
   padding-bottom: 20px;
 }
 
+.portal-form-wrap {
+  max-width: 680px;
+}
+
+.portal-password-form {
+  display: grid;
+  gap: 18px;
+}
+
+.portal-password-form input {
+  display: block;
+  width: 100%;
+  margin-top: 7px;
+}
+
+.portal-password-form .helptext,
+.portal-password-form ul {
+  color: var(--muted);
+  font-size: .82rem;
+}
+
 .portal-milestone {
   padding: 16px 0;
   border-top: 1px solid var(--border);

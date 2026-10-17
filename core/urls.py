@@ -1,5 +1,6 @@
 from django.urls import path
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView, LogoutView, PasswordChangeView
+from django.urls import reverse_lazy
 
 from .feeds import LatestPostsFeed
 from . import views
@@ -23,6 +24,14 @@ urlpatterns = [
         name="portal_login",
     ),
     path("portal/logout/", LogoutView.as_view(), name="portal_logout"),
+    path(
+        "portal/password/",
+        PasswordChangeView.as_view(
+            template_name="core/portal/password_change.html",
+            success_url=reverse_lazy("core:portal_dashboard"),
+        ),
+        name="portal_password_change",
+    ),
     path("portal/", views.portal_dashboard, name="portal_dashboard"),
     path(
         "portal/projects/<slug:slug>/",

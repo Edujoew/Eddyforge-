@@ -1,5 +1,6 @@
 import json
 import re
+from copy import deepcopy
 from math import ceil
 from pathlib import PurePosixPath
 from urllib.parse import urlsplit
@@ -285,6 +286,20 @@ def service_detail(request, slug):
 def resume(request):
     from core.data.resume import RESUME_DATA
 
+    resume_data = deepcopy(RESUME_DATA)
+    published_projects = Project.objects.filter(is_published=True)
+    if published_projects.exists():
+        resume_data["projects"] = [
+            {
+                "title": project.title,
+                "slug": project.slug,
+                "summary": project.short_description or project.description,
+                "stack": project.stack_list,
+                "repository": project.repo,
+            }
+            for project in published_projects
+        ]
+
     resume_root = (settings.BASE_DIR / "core" / "static" / "core").resolve()
     resume_file = (resume_root / settings.RESUME_PDF).resolve()
     has_resume_pdf = (
@@ -300,9 +315,9 @@ def resume(request):
             **page_context(
                 request,
                 "Resume | Johnny Edwards — Eddyforge",
-                RESUME_DATA["summary"],
+                resume_data["summary"],
             ),
-            "resume_data": RESUME_DATA,
+            "resume_data": resume_data,
             "resume_pdf_path": resume_pdf_path,
             "has_resume_pdf": has_resume_pdf,
         },

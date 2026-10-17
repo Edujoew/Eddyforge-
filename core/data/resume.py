@@ -4,9 +4,10 @@ RESUME_DATA = {
     "role": "Full-stack developer",
     "location": "Kericho, Kenya",
     "summary": (
-        "Full-stack developer based in Kenya, building digital products that solve "
-        "real problems. Specializes in Python/Django backends paired with clean, "
-        "responsive frontends, with a focus on maintainable architecture and clear UX."
+        "Full-stack developer based in Kenya with 2+ years of hands-on software "
+        "development experience. Builds practical digital products with Python and "
+        "Django backends, responsive frontends, and a focus on maintainable "
+        "architecture and clear UX."
     ),
     "links": [
         {"label": "Email", "url": "mailto:eddytech451@gmail.com"},
@@ -51,7 +52,17 @@ RESUME_DATA = {
             "repository": "https://github.com/Edujoew/Smart-Rent-manager",
         },
     ],
-    "experience": [],
+    "experience": [
+        {
+            "title": "Full-stack software development · 2+ years",
+            "description": (
+                "Hands-on work designing and building web applications, including "
+                "Django systems for resource booking and property-management workflows. "
+                "Experience spans backend application logic, relational data, and "
+                "responsive browser interfaces."
+            ),
+        }
+    ],
     "education": [],
     "certifications": [],
 }

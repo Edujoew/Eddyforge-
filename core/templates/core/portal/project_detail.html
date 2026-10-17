@@ -10,7 +10,10 @@
 </header>
 <section class="portal-section">
   <div class="container-c">
-    <p><a class="project-card-action" href="{% url 'core:portal_dashboard' %}">← All projects</a></p>
+    <div class="portal-actions">
+      <a class="project-card-action" href="{% url 'core:portal_dashboard' %}">← All projects</a>
+      <a class="project-card-action" href="{% url 'core:portal_password_change' %}">Change password</a>
+    </div>
 
     <div class="portal-detail-grid">
       <section class="portal-card" aria-labelledby="milestones-title">

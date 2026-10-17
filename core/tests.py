@@ -1,6 +1,9 @@
 from datetime import timedelta
+from io import StringIO
 
 from django.contrib.auth import get_user_model
+from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase, override_settings
 from django.utils import timezone
 
@@ -77,6 +80,16 @@ class PublicPagesTests(TestCase):
             with self.subTest(path=path):
                 self.assertEqual(self.client.get(path).status_code, 200)
 
+    def test_main_navigation_links_to_staff_admin(self):
+        response = self.client.get("/")
+        self.assertContains(response, 'href="/admin/"')
+
+    def test_resume_uses_published_database_projects(self):
+        response = self.client.get("/resume/")
+        self.assertContains(response, self.project.title)
+        self.assertContains(response, "2+ years")
+        self.assertContains(response, "Print / Save as PDF")
+
     def test_contact_form_persists_valid_message(self):
         response = self.client.post(
             "/contact/",
@@ -114,6 +127,21 @@ class PublicPagesTests(TestCase):
         response = self.client.get("/does-not-exist/")
         self.assertEqual(response.status_code, 404)
         self.assertContains(response, "Page not found", status_code=404)
+
+    def test_privacy_notice_describes_actual_storage_and_external_assets(self):
+        response = self.client.get("/privacy/")
+        for expected in (
+            "project brief",
+            "reference links",
+            "eddyforge_content_override",
+            "fonts.googleapis.com",
+            "cdn.jsdelivr.net",
+            "cdnjs.cloudflare.com",
+            "does not configure analytics",
+            "configured database",
+        ):
+            with self.subTest(expected=expected):
+                self.assertContains(response, expected, status_code=200)
 
 
 class ClientPortalTests(TestCase):
@@ -164,7 +192,11 @@ class ClientPortalTests(TestCase):
         )
 
     def test_anonymous_portal_requests_redirect_to_login(self):
-        for path in ("/portal/", self.project.get_absolute_url()):
+        for path in (
+            "/portal/",
+            "/portal/password/",
+            self.project.get_absolute_url(),
+        ):
             with self.subTest(path=path):
                 response = self.client.get(path)
                 self.assertRedirects(
@@ -208,3 +240,94 @@ class ClientPortalTests(TestCase):
         response = self.client.post("/portal/logout/")
         self.assertRedirects(response, "/portal/login/")
         self.assertNotIn("_auth_user_id", self.client.session)
+
+    def test_client_cannot_open_django_admin(self):
+        self.client.force_login(self.client_user)
+        self.assertNotEqual(self.client.get("/admin/").status_code, 200)
+
+    def test_client_can_change_password(self):
+        self.client.force_login(self.client_user)
+        self.assertEqual(self.client.get("/portal/password/").status_code, 200)
+        response = self.client.post(
+            "/portal/password/",
+            {
+                "old_password": "safe-test-password",
+                "new_password1": "new-safe-test-password-123",
+                "new_password2": "new-safe-test-password-123",
+            },
+        )
+        self.assertRedirects(response, "/portal/")
+        self.client.logout()
+        self.assertTrue(
+            get_user_model().objects.get(pk=self.client_user.pk).check_password(
+                "new-safe-test-password-123"
+            )
+        )
+        self.assertTrue(
+            self.client.login(
+                username="client",
+                password="new-safe-test-password-123",
+            )
+        )
+
+
+class LaunchManagementCommandsTests(TestCase):
+    def test_create_client_is_idempotent_and_prints_password_only_once(self):
+        first_output = StringIO()
+        call_command(
+            "create_client",
+            username="launch-client",
+            email="launch@example.com",
+            project_title="Launch Project",
+            stdout=first_output,
+        )
+        temporary_password = first_output.getvalue().split(
+            "Temporary password (shown once): ", 1
+        )[1].splitlines()[0]
+        self.assertGreaterEqual(len(temporary_password), 16)
+
+        second_output = StringIO()
+        call_command(
+            "create_client",
+            username="launch-client",
+            email="changed@example.com",
+            project_title="Launch Project",
+            status="complete",
+            stdout=second_output,
+        )
+        self.assertNotIn("password", second_output.getvalue().lower())
+        user = get_user_model().objects.get(username="launch-client")
+        self.assertEqual(user.email, "launch@example.com")
+        self.assertTrue(user.check_password(temporary_password))
+        self.assertEqual(ClientProject.objects.filter(client=user).count(), 1)
+
+    def test_create_client_refuses_to_modify_staff_account(self):
+        staff = get_user_model().objects.create_user(
+            username="protected-staff",
+            email="staff@example.com",
+            password="safe-test-password",
+            is_staff=True,
+        )
+        with self.assertRaises(CommandError):
+            call_command(
+                "create_client",
+                username=staff.username,
+                email="attacker@example.com",
+                project_title="Do not create",
+            )
+        staff.refresh_from_db()
+        self.assertEqual(staff.email, "staff@example.com")
+
+    def test_content_gaps_is_read_only_and_reports_empty_sections(self):
+        Project.objects.create(
+            title="Content gap test",
+            slug="content-gap-test",
+            description="A test project.",
+        )
+        output = StringIO()
+        before = Project.objects.count()
+        call_command("content_gaps", stdout=output)
+        self.assertEqual(Project.objects.count(), before)
+        self.assertIn("Hardware", output.getvalue())
+        self.assertIn("education", output.getvalue())
+        self.assertIn(", results, stack, cover", output.getvalue())
