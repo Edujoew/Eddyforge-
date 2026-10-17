@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WCAG Colour Contrast Checker</title>
+  <link rel="stylesheet" href="../../pages.css">
+</head>
+<body class="standalone-lab">
+  <main class="lab-tool">
+    <p class="lab-eyebrow">EDDYFORGE LAB / ACCESSIBILITY</p>
+    <h1>Colour contrast checker</h1>
+    <p>Compare a text colour against a background using the WCAG relative-luminance contrast ratio.</p>
+    <div class="lab-colours">
+      <label>Text colour
+        <span class="lab-colour-input"><input id="foreground-picker" type="color" value="#DDE6F0" aria-label="Choose text colour"><input id="foreground" type="text" value="#DDE6F0" inputmode="text" autocomplete="off" spellcheck="false"></span>
+      </label>
+      <label>Background colour
+        <span class="lab-colour-input"><input id="background-picker" type="color" value="#060810" aria-label="Choose background colour"><input id="background" type="text" value="#060810" inputmode="text" autocomplete="off" spellcheck="false"></span>
+      </label>
+    </div>
+    <button id="check-contrast" type="button" class="lab-primary">Check contrast</button>
+    <section id="contrast-result" class="contrast-result" aria-live="polite" aria-atomic="true">
+      <p>Contrast ratio</p><strong id="ratio">—</strong>
+      <div class="contrast-badges"><span id="normal-result">Normal text: —</span><span id="large-result">Large text: —</span></div>
+    </section>
+    <p id="contrast-error" class="lab-error" role="alert" hidden>Enter both colours as six-digit hex values, for example #00D6FF.</p>
+    <p class="lab-footnote">WCAG AA thresholds shown: 4.5:1 for normal text and 3:1 for large text. This tool is a quick check, not a full accessibility audit.</p>
+  </main>
+  <script>
+    (() => {
+      const colourNames = ['foreground', 'background'];
+      const toLinear = value => {
+        const channel = value / 255;
+        return channel <= 0.04045 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4;
+      };
+      const luminance = hex => {
+        const rgb = hex.slice(1).match(/.{2}/g).map(value => parseInt(value, 16));
+        return 0.2126 * toLinear(rgb[0]) + 0.7152 * toLinear(rgb[1]) + 0.0722 * toLinear(rgb[2]);
+      };
+      const validHex = value => /^#[0-9a-f]{6}$/i.test(value);
+      const showResult = (element, passes) => {
+        element.textContent = `${element.id === 'normal-result' ? 'Normal text' : 'Large text'}: ${passes ? 'Pass' : 'Does not pass'}`;
+        element.classList.toggle('pass', passes);
+        element.classList.toggle('fail', !passes);
+      };
+      const check = () => {
+        const foreground = document.getElementById('foreground').value.trim();
+        const background = document.getElementById('background').value.trim();
+        const error = document.getElementById('contrast-error');
+        if (!validHex(foreground) || !validHex(background)) {
+          error.hidden = false;
+          return;
+        }
+        error.hidden = true;
+        const values = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
+        const ratio = (values[0] + 0.05) / (values[1] + 0.05);
+        document.getElementById('ratio').textContent = `${ratio.toFixed(2)}:1`;
+        showResult(document.getElementById('normal-result'), ratio >= 4.5);
+        showResult(document.getElementById('large-result'), ratio >= 3);
+        document.getElementById('contrast-result').style.setProperty('--preview-fg', foreground);
+        document.getElementById('contrast-result').style.setProperty('--preview-bg', background);
+      };
+      colourNames.forEach(name => {
+        const text = document.getElementById(name);
+        const picker = document.getElementById(`${name}-picker`);
+        picker.addEventListener('input', () => { text.value = picker.value.toUpperCase(); check(); });
+        text.addEventListener('input', () => {
+          if (validHex(text.value.trim())) picker.value = text.value.trim();
+        });
+      });
+      document.getElementById('check-contrast').addEventListener('click', check);
+      check();
+    })();
+  </script>
+</body>
+</html>

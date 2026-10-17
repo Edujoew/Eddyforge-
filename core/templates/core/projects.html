@@ -1,38 +1,9 @@
+{% extends "core/base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Projects — Eddyforge</title>
-  <link rel="icon" type="image/png" href="{% static 'core/eddyforge-logo.png' %}">
-  <link rel="stylesheet" href="{% static 'core/style.css' %}">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
-</head>
-<body>
-
-  <a href="https://wa.me/254703817789" class="hire-btn" data-cms="profile.whatsappLink" data-cms-attr="href"><i class="bi bi-whatsapp"></i> Hire Me</a>
-
-  <nav class="nav-wrap">
-    <a class="nav-logo" href="{% url 'core:home' %}">
-      <div class="logo-avatar">
-        <img src="{% static 'core/eddyforge-logo.png' %}" alt="Eddyforge Logo">
-      </div>
-      <span class="nav-logo-text">Eddyforge</span>
-    </a>
-    <button class="nav-toggle" id="navToggle">
-      <i class="bi bi-list"></i>
-    </button>
-    <ul class="nav-links" id="navLinks">
-      <li><a href="{% url 'core:home' %}">Home</a></li>
-      <li><a href="{% url 'core:about' %}">About</a></li>
-      <li><a href="{% url 'core:services' %}">Services</a></li>
-      <li><a href="{% url 'core:projects' %}">Work</a></li>
-      <li><a href="{% url 'core:contact' %}">Contact</a></li>
-    </ul>
-  </nav>
-
-  <div class="page-wrap">
+{% block title %}Projects — Eddyforge{% endblock %}
+{% block meta_description %}Explore software projects by Eddyforge, including resource booking and property management systems.{% endblock %}
+{% block content %}
+<div class="page-wrap">
 
     <div class="page-hero">
       <div class="page-hero-inner">
@@ -51,7 +22,36 @@
           <p class="section-sub">A curated selection of projects that demonstrate depth and range.</p>
         </div>
 
-        <div id="projects-featured"></div>
+        <div id="projects-featured"{% if server_projects %} data-server-rendered="true"{% endif %}>
+          {% for project in published_projects %}
+          <article class="tech-card reveal case-study-card">
+            <div class="case-study-copy">
+              <span class="project-card-badge"><i class="bi {{ project.badge_icon }}" aria-hidden="true"></i> {{ project.badge|default:"Selected work" }}</span>
+              <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
+              <p>{{ project.short_description|default:project.description }}</p>
+              {% if project.highlights %}
+              <ul class="case-study-highlights">
+                {% for highlight in project.highlights %}
+                <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>{{ highlight }}</li>
+                {% endfor %}
+              </ul>
+              {% endif %}
+              <a class="btn-primary-c" href="{{ project.get_absolute_url }}">Read case study <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+            </div>
+            <a class="case-study-cover" href="{{ project.get_absolute_url }}" aria-label="Read the {{ project.title }} case study">
+              {% if project.cover %}
+                {% if "://" in project.cover %}
+                <img src="{{ project.cover }}" alt="{{ project.title }} project preview" width="720" height="480" loading="lazy">
+                {% else %}
+                {% load static %}<img src="{% static project.cover %}" alt="{{ project.title }} project preview" width="720" height="480" loading="lazy">
+                {% endif %}
+              {% else %}
+              <span class="case-study-placeholder"><i class="bi {{ project.icon|default:'bi-window' }}" aria-hidden="true"></i></span>
+              {% endif %}
+            </a>
+          </article>
+          {% endfor %}
+        </div>
       </div>
     </section>
 
@@ -74,7 +74,7 @@
             <i class="bi bi-plus-circle-dotted" style="font-size:1.4rem;color:var(--cyan);margin-bottom:14px;display:block;"></i>
             <div style="font-family:var(--display);font-weight:700;color:#fff;margin-bottom:8px;">Got a Project?</div>
             <p style="color:var(--muted);font-size:.88rem;line-height:1.7;margin-bottom:20px;">I'm open to new collaborations. Let's build something that could be featured here next.</p>
-            <a href="{% url 'core:contact' %}" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">Start a project <i class="bi bi-arrow-right"></i></a>
+            <a href="{% url 'core:start' %}" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">Start a project <i class="bi bi-arrow-right"></i></a>
           </div>
         </div>
       </div>
@@ -92,19 +92,4 @@
     </section>
 
   </div>
-
-  <footer>
-    <div class="footer-brand">Eddy<span>forge</span></div>
-    <div class="footer-links">
-      <a href="{% url 'core:about' %}">About</a>
-      <a href="{% url 'core:services' %}">Services</a>
-      <a href="{% url 'core:projects' %}">Work</a>
-      <a href="{% url 'core:contact' %}">Contact</a>
-    </div>
-    <div class="footer-copy">© 2026 Eddyforge</div>
-  </footer>
-
-  <script src="{% static 'core/content.js' %}"></script>
-  <script src="{% static 'core/nav.js' %}"></script>
-</body>
-</html>
+{% endblock %}

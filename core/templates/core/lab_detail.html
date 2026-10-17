@@ -1,0 +1,18 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="detail-hero">
+    <div class="container-c">
+      <a class="back-link-inline" href="{% url 'core:lab' %}"><i class="bi bi-arrow-left" aria-hidden="true"></i> All experiments</a>
+      <p class="section-label">Eddyforge Lab</p>
+      <h1 class="detail-title">{{ experiment.title }}</h1>
+      <p class="detail-summary">{{ experiment.summary }}</p>
+      {% if experiment.tags_list %}<ul class="tag-list">{% for tag in experiment.tags_list %}<li>{{ tag }}</li>{% endfor %}</ul>{% endif %}
+      {% if experiment.repo_url %}<a href="{{ experiment.repo_url }}" target="_blank" rel="noopener noreferrer" class="repo-link">View source <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>{% endif %}
+    </div>
+  </header>
+  <section class="container-c lab-embed-section">
+    <iframe class="lab-embed" src="{{ demo_url }}" title="{{ experiment.title }} interactive demo" loading="lazy" sandbox="allow-scripts" referrerpolicy="no-referrer"></iframe>
+  </section>
+</div>
+{% endblock %}

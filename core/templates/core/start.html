@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <p class="page-hero-eyebrow">Project inquiry</p>
+      <h1 class="page-hero-title">Tell me what <span>you need built</span></h1>
+      <p class="page-hero-sub">A few details help me understand the goal, timing, and a useful next step. KES budgets are welcome.</p>
+    </div>
+  </header>
+  <section class="start-section">
+    <div class="container-c start-layout">
+      <div class="start-intro">
+        <h2>A clear starting point</h2>
+        <p>Share what you know so far. If the scope is still taking shape, say that in the brief and we can work it through together.</p>
+        <p>I use your details only to respond to this inquiry. No files are uploaded through this form.</p>
+      </div>
+      <form class="inquiry-form tech-card" method="post" action="{% url 'core:start' %}" novalidate>
+        {% csrf_token %}
+        {% if form.non_field_errors %}<div class="form-error-summary" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        <div class="honeypot-wrap" aria-hidden="true">{{ form.website.label_tag }}{{ form.website }}</div>
+        {% for field in form %}
+          {% if field.name != "website" %}
+          <div class="inquiry-field{% if field.errors %} has-error{% endif %}">
+            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %}<span aria-hidden="true"> *</span>{% endif %}</label>
+            {{ field }}
+            {% if field.help_text %}<p class="field-help" id="{{ field.id_for_label }}_help">{{ field.help_text }}</p>{% endif %}
+            {% if field.errors %}<ul class="field-errors" role="alert">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+          </div>
+          {% endif %}
+        {% endfor %}
+        <p class="budget-note">The budget choices are in USD for guidance; KES budgets are welcome too.</p>
+        <button class="form-submit" type="submit">Send project brief <i class="bi bi-arrow-right" aria-hidden="true"></i></button>
+      </form>
+    </div>
+  </section>
+</div>
+{% endblock %}

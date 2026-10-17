@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <section class="error-page container-c">
+    <p class="section-label">404 / Not found</p>
+    <h1>That page isn't here.</h1>
+    <p>The link may be out of date, or the address may have a typo.</p>
+    <div class="detail-actions"><a class="btn-primary-c" href="{% url 'core:home' %}">Go to home</a><a class="btn-ghost" href="{% url 'core:projects' %}">Browse projects</a></div>
+    {% if best_projects %}<h2>Selected case studies</h2><ul>{% for project in best_projects %}<li><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></li>{% endfor %}</ul>{% endif %}
+    <nav aria-label="Helpful pages"><a href="{% url 'core:services' %}">Services</a><a href="{% url 'core:contact' %}">Contact</a><a href="/blog/">Blog</a></nav>
+  </section>
+</div>
+{% endblock %}

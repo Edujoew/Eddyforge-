@@ -4,12 +4,29 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = os.environ.get(
-    "DJANGO_SECRET_KEY",
-    "django-insecure-eddyforge-development-key-change-before-deployment",
-)
 DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
-ALLOWED_HOSTS = [".vercel.app", "localhost", "127.0.0.1"]
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
+if not SECRET_KEY:
+    if not DEBUG:
+        raise RuntimeError("DJANGO_SECRET_KEY must be set when DJANGO_DEBUG is false.")
+    SECRET_KEY = "django-insecure-eddyforge-development-key-change-before-deployment"
+
+ALLOWED_HOSTS = [".vercel.app"]
+ALLOWED_HOSTS.extend(
+    host.strip()
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    if host.strip()
+)
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
+SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")
+BOOKING_URL = os.environ.get("BOOKING_URL", "").strip()
+CONTACT_EMAIL = os.environ.get("CONTACT_EMAIL", "eddytech451@gmail.com").strip()
+RESPONSE_TIME_TEXT = os.environ.get("RESPONSE_TIME_TEXT", "within 1-2 business days").strip()
+RESUME_PDF = os.environ.get("RESUME_PDF", "resume.pdf").strip()
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -18,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sitemaps",
     "core",
 ]
 
@@ -53,12 +71,26 @@ TEMPLATES = [
 WSGI_APPLICATION = "eddyforge_project.wsgi.application"
 ASGI_APPLICATION = "eddyforge_project.asgi.application"
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+DATABASE_URL = os.environ.get("DATABASE_URL")
+if DATABASE_URL:
+    import dj_database_url
+
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=DATABASE_URL,
+            conn_max_age=0,
+            conn_health_checks=True,
+        )
     }
-}
+    if DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
+        DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
+else:
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
+    }
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
@@ -85,3 +117,11 @@ STORAGES = {
 }
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+LOGIN_URL = "core:portal_login"
+LOGIN_REDIRECT_URL = "core:portal_dashboard"
+LOGOUT_REDIRECT_URL = "core:portal_login"
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")

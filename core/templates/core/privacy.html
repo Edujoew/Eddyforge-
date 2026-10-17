@@ -1,0 +1,15 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="page-hero"><div class="page-hero-inner"><p class="page-hero-eyebrow">Privacy</p><h1 class="page-hero-title">Your information, <span>plainly explained</span></h1><p class="page-hero-sub">Last updated: {% now "F j, Y" %}</p></div></header>
+  <article class="container-c policy-content">
+    <section><h2>What this site collects</h2><p>If you use the contact form, Eddyforge receives your first and last name, email address, selected service, and project brief. The project inquiry form can also collect your name, email, optional company, project type, budget range, timeline, project description, and reference links. Do not submit confidential information you do not want to share by email.</p></section>
+    <section><h2>Why the information is used</h2><p>The information is used to review and respond to your inquiry, clarify the work you are asking about, and keep a record of project conversations. It is not sold or used for advertising by this site.</p></section>
+    <section><h2>Where it is stored</h2><p>Form submissions are stored in the Django application's configured database. Local development uses SQLite; production should use the hosted database configured for the deployment. The site does not accept file uploads through these forms.</p></section>
+    <section><h2>Cookies and analytics</h2><p>The application uses Django session and CSRF cookies for session handling and form protection. This site does not configure an analytics service. Embedded or linked third-party services may process information under their own policies.</p></section>
+    <section><h2>Third-party services</h2><p>The site is hosted through Vercel. A database provider processes data when a hosted database is configured. If a booking URL is configured, the confirmation page may embed that provider. The frontend also loads assets from Google Fonts, jsDelivr (Bootstrap Icons), and cdnjs (code highlighting). Their services may receive standard browser request data when assets are loaded.</p></section>
+    <section><h2>Access or deletion requests</h2><p>To ask what information is held about your inquiry, or to request its correction or deletion, email <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>. Include enough context to identify the message, but do not send passwords or payment details.</p></section>
+    <p class="policy-note">This page describes the current application configuration and is not a statement of compliance with a particular law. The site owner should review this policy before relying on it.</p>
+  </article>
+</div>
+{% endblock %}

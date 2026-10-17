@@ -1,0 +1,19 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="page-hero"><div class="page-hero-inner"><p class="page-hero-eyebrow">Small experiments</p><h1 class="page-hero-title">The Eddyforge <span>lab</span></h1><p class="page-hero-sub">Small browser-based tools, made to be useful and easy to inspect.</p></div></header>
+  {% if experiments %}
+  <section><div class="container-c lab-grid">
+    {% for experiment in experiments %}
+    <article class="tech-card lab-card">
+      <p class="section-label">Experiment {{ forloop.counter|stringformat:"02d" }}</p>
+      <h2><a href="{{ experiment.get_absolute_url }}">{{ experiment.title }}</a></h2>
+      <p>{{ experiment.summary }}</p>
+      {% if experiment.tags_list %}<ul class="tag-list">{% for tag in experiment.tags_list %}<li>{{ tag }}</li>{% endfor %}</ul>{% endif %}
+      <a class="btn-ghost" href="{{ experiment.get_absolute_url }}">Open experiment <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </article>
+    {% endfor %}
+  </div></section>
+  {% endif %}
+</div>
+{% endblock %}

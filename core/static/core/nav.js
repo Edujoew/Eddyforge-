@@ -12,13 +12,15 @@ window.addEventListener('DOMContentLoaded', () => {
     // Toggle menu open/close
     toggle.addEventListener('click', (e) => {
       e.stopPropagation(); 
-      links.classList.toggle('open');
+      const isOpen = links.classList.toggle('open');
+      toggle.setAttribute('aria-expanded', String(isOpen));
     });
 
     // Close menu when clicking a link (important for mobile)
     links.querySelectorAll('a').forEach(a => {
       a.addEventListener('click', () => {
         links.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
       });
     });
 
@@ -26,6 +28,7 @@ window.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('click', (e) => {
       if (!links.contains(e.target) && !toggle.contains(e.target)) {
         links.classList.remove('open');
+        toggle.setAttribute('aria-expanded', 'false');
       }
     });
   }
@@ -48,11 +51,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
   // ── 3. NAV ACTIVE LINK STATE ──
   // Checks the URL and highlights the current page link
-  const page = window.location.pathname.split('/').filter(Boolean).pop() || '';
+  const currentPath = window.location.pathname;
   
   document.querySelectorAll('.nav-links a').forEach(a => {
-    const linkPage = new URL(a.href).pathname.split('/').filter(Boolean).pop() || '';
-    if (linkPage === page) {
+    const linkPath = new URL(a.href).pathname;
+    const isActive = linkPath === '/'
+      ? currentPath === '/'
+      : currentPath === linkPath || currentPath.startsWith(linkPath);
+    if (isActive && !a.classList.contains('nav-cta')) {
       a.classList.add('active');
     }
   });

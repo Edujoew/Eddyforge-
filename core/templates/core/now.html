@@ -1,0 +1,14 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="page-hero"><div class="page-hero-inner"><p class="page-hero-eyebrow">Current notes</p><h1 class="page-hero-title">What I'm <span>doing now</span></h1><p class="page-hero-sub">A short, occasional update on current work.</p></div></header>
+  <section><div class="container-c now-content">
+    {% if now_update %}
+    <p class="writing-date">Last updated {{ now_update.updated_at|date:"F j, Y" }}</p>
+    <div class="markdown-content">{{ rendered_update }}</div>
+    {% else %}
+    <p class="empty-state">There is no published update yet.</p>
+    {% endif %}
+  </div></section>
+</div>
+{% endblock %}

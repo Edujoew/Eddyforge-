@@ -179,12 +179,6 @@
   </style>
 </head>
 <body>
-<script>
-  if (sessionStorage.getItem('ef_admin_auth') !== 'granted') {
-    window.location.replace("{% url 'core:login' %}");
-  }
-</script>
-
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
 <div class="admin-wrap">
@@ -215,9 +209,12 @@
     <div class="sidebar-footer">
       <div class="admin-badge">
         <div class="admin-badge-dot"></div>
-        <div class="admin-badge-text"><span id="adminUsername">eddyforge_admin</span><small>Superuser · Full Access</small></div>
+        <div class="admin-badge-text"><span>{{ request.user.username }}</span><small>Staff · Full Access</small></div>
       </div>
-      <button class="logout-btn" id="logoutBtn"><i class="bi bi-box-arrow-left"></i> Sign Out</button>
+      <form method="post" action="{% url 'core:portal_logout' %}">
+        {% csrf_token %}
+        <button class="logout-btn" type="submit"><i class="bi bi-box-arrow-left"></i> Sign Out</button>
+      </form>
     </div>
   </aside>
 
@@ -316,23 +313,6 @@
           <p style="color:var(--muted);font-size:.8rem;margin-top:4px;">"Projects Shipped" is calculated automatically from your Projects list.</p>
         </div>
 
-        <div class="info-card reveal" style="padding:28px;">
-          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;"><i class="bi bi-shield-lock"></i>&nbsp; Admin Login Credentials</div>
-          <p style="color:var(--muted);font-size:.88rem;line-height:1.75;margin-bottom:20px;">
-            Generate a new hash below, then paste both values into <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">login.html</code> replacing <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">ADMIN_USERNAME_HASH</code> / <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">ADMIN_PASSWORD_HASH</code>.
-          </p>
-          <div class="field-grid">
-            <div class="field-block"><label>New Username</label><input class="form-input" id="cred-user" type="text" placeholder="eddyforge_admin"></div>
-            <div class="field-block"><label>New Password</label><input class="form-input" id="cred-pass" type="text" placeholder="Eddyforge@Admin2026"></div>
-          </div>
-          <button class="action-btn primary" id="genHashBtn" style="margin-bottom:16px;"><i class="bi bi-hash"></i> Generate Hashes</button>
-          <div id="hashOutput" style="display:none;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px 20px;">
-            <div style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-bottom:6px;">ADMIN_USERNAME_HASH</div>
-            <div style="font-family:var(--mono);font-size:.78rem;color:var(--cyan);word-break:break-all;margin-bottom:12px;" id="hashUser"></div>
-            <div style="font-family:var(--mono);font-size:.7rem;color:var(--muted);margin-bottom:6px;">ADMIN_PASSWORD_HASH</div>
-            <div style="font-family:var(--mono);font-size:.78rem;color:var(--cyan);word-break:break-all;" id="hashPass"></div>
-          </div>
-        </div>
       </div>
 
       <div class="panel" id="panel-sitedata">
@@ -597,21 +577,6 @@
   document.getElementById('s-years').addEventListener('input', (e) => { siteData.stats.yearsBuilding = Number(e.target.value) || 0; renderJsonPreview(); markDirty(); });
   document.getElementById('s-remote').addEventListener('input', (e) => { siteData.stats.remotePercent = Number(e.target.value) || 0; renderJsonPreview(); markDirty(); });
 
-  async function sha256(str) {
-    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-  }
-  document.getElementById('genHashBtn').addEventListener('click', async () => {
-    const u = document.getElementById('cred-user').value.trim();
-    const pw = document.getElementById('cred-pass').value;
-    if (!u || !pw) { showToast('Enter both a username and password first'); return; }
-    const [uh, ph] = await Promise.all([sha256(u), sha256(pw)]);
-    document.getElementById('hashUser').textContent = uh;
-    document.getElementById('hashPass').textContent = ph;
-    document.getElementById('hashOutput').style.display = 'block';
-    showToast('Hashes generated — copy them into login.html');
-  });
-
   document.getElementById('panel-projects').addEventListener('input', handleArrInput);
   document.getElementById('panel-services').addEventListener('input', handleArrInput);
   document.getElementById('panel-testimonials').addEventListener('input', handleArrInput);
@@ -735,13 +700,6 @@
   document.getElementById('sidebarToggle').addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
   function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
   overlay.addEventListener('click', closeSidebar);
-
-  document.getElementById('adminUsername').textContent = sessionStorage.getItem('ef_admin_user') || 'eddyforge_admin';
-  document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.removeItem('ef_admin_auth');
-    sessionStorage.removeItem('ef_admin_user');
-    window.location.href = "{% url 'core:login' %}";
-  });
 
   function showToast(msg) {
     const toast = document.getElementById('toast');

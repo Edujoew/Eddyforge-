@@ -1,0 +1,34 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrap resume-page">
+  <header class="page-hero">
+    <div class="page-hero-inner">
+      <p class="page-hero-eyebrow">Resume</p>
+      <h1 class="page-hero-title">{{ resume_data.name }} <span>— {{ resume_data.role }}</span></h1>
+      <p class="page-hero-sub">{{ resume_data.location }} · Available for remote collaboration</p>
+      <div class="resume-actions">
+        <button type="button" class="btn-primary-c" onclick="window.print()">Print / Save as PDF <i class="bi bi-printer" aria-hidden="true"></i></button>
+        {% if has_resume_pdf %}<a class="btn-ghost" href="{% static resume_pdf_path %}" download>Download PDF <i class="bi bi-download" aria-hidden="true"></i></a>{% endif %}
+      </div>
+    </div>
+  </header>
+  <div class="container-c resume-content">
+    <section class="resume-section"><h2>Summary</h2><p>{{ resume_data.summary }}</p></section>
+    <section class="resume-section"><h2>Skills</h2><div class="resume-skills">{% for group in resume_data.skills %}<div><h3>{{ group.group }}</h3><ul class="tag-list">{% for skill in group.items %}<li>{{ skill }}</li>{% endfor %}</ul></div>{% endfor %}</div></section>
+    {% if resume_data.projects %}
+    <section class="resume-section"><h2>Selected projects</h2>{% for project in resume_data.projects %}<article class="resume-project"><h3><a href="{% url 'core:project_detail' slug=project.slug %}">{{ project.title }}</a></h3><p>{{ project.summary }}</p><ul class="tag-list">{% for item in project.stack %}<li>{{ item }}</li>{% endfor %}</ul><a href="{{ project.repository }}" target="_blank" rel="noopener noreferrer">Repository <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a></article>{% endfor %}</section>
+    {% endif %}
+    {% if resume_data.experience %}
+    <section class="resume-section"><h2>Experience</h2>{% for item in resume_data.experience %}<article><h3>{{ item.title }}</h3><p>{{ item.description }}</p></article>{% endfor %}</section>
+    {% endif %}
+    {% if resume_data.education %}
+    <section class="resume-section"><h2>Education</h2>{% for item in resume_data.education %}<article><h3>{{ item.name }}</h3><p>{{ item.description }}</p></article>{% endfor %}</section>
+    {% endif %}
+    {% if resume_data.certifications %}
+    <section class="resume-section"><h2>Certifications</h2><ul>{% for item in resume_data.certifications %}<li>{{ item }}</li>{% endfor %}</ul></section>
+    {% endif %}
+    <section class="resume-section resume-contact"><h2>Contact</h2><ul>{% for link in resume_data.links %}<li><a href="{{ link.url }}">{{ link.label }}</a></li>{% endfor %}</ul></section>
+  </div>
+</div>
+{% endblock %}

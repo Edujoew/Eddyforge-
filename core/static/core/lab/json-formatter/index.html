@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JSON Formatter and Validator</title>
+  <link rel="stylesheet" href="../../pages.css">
+</head>
+<body class="standalone-lab">
+  <main class="lab-tool">
+    <p class="lab-eyebrow">EDDYFORGE LAB / DEVELOPER TOOL</p>
+    <h1>JSON formatter &amp; validator</h1>
+    <p>Format JSON in this browser. Your text is processed locally and is not sent to a server.</p>
+    <label class="json-label" for="json-input">JSON input</label>
+    <textarea id="json-input" rows="12" spellcheck="false" autocapitalize="off" autocomplete="off">{ "eddyforge": "build with care", "active": true, "items": [1, 2, 3] }</textarea>
+    <div class="lab-actions">
+      <button id="format-json" class="lab-primary" type="button">Format &amp; validate</button>
+      <button id="copy-json" class="lab-secondary" type="button" disabled>Copy formatted JSON</button>
+    </div>
+    <p id="json-status" class="json-status" role="status" aria-live="polite">Ready to validate.</p>
+  </main>
+  <script>
+    (() => {
+      const input = document.getElementById('json-input');
+      const status = document.getElementById('json-status');
+      const copy = document.getElementById('copy-json');
+      document.getElementById('format-json').addEventListener('click', () => {
+        try {
+          input.value = JSON.stringify(JSON.parse(input.value), null, 2);
+          status.textContent = 'Valid JSON. Formatted with two-space indentation.';
+          status.className = 'json-status pass';
+          copy.disabled = false;
+        } catch (error) {
+          status.textContent = `Invalid JSON: ${error.message}`;
+          status.className = 'json-status fail';
+          copy.disabled = true;
+        }
+      });
+      copy.addEventListener('click', async () => {
+        try {
+          await navigator.clipboard.writeText(input.value);
+          status.textContent = 'Formatted JSON copied.';
+        } catch (error) {
+          status.textContent = 'Clipboard access is unavailable. Select the formatted text to copy it.';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

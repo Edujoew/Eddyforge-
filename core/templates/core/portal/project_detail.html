@@ -1,0 +1,38 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<section class="section portal-section">
+  <div class="container">
+    <a class="text-link" href="{% url 'core:portal_dashboard' %}">← All projects</a>
+    <header class="section-heading portal-project-heading">
+      <p class="eyebrow">{{ project.get_status_display }}</p>
+      <h1>{{ project.title }}</h1>
+      {% if project.summary %}<p>{{ project.summary }}</p>{% endif %}
+    </header>
+
+    <div class="portal-detail-grid">
+      <section class="portal-card" aria-labelledby="milestones-title">
+        <h2 id="milestones-title">Milestones</h2>
+        {% for milestone in project.milestones.all %}
+          <article class="portal-milestone">
+            <p class="eyebrow">{{ milestone.get_status_display }}{% if milestone.due_date %} · {{ milestone.due_date|date:"M j, Y" }}{% endif %}</p>
+            <h3>{{ milestone.title }}</h3>
+            {% if milestone.details %}<p>{{ milestone.details }}</p>{% endif %}
+          </article>
+        {% empty %}
+          <p>Milestones will appear here as they are added.</p>
+        {% endfor %}
+      </section>
+
+      <section class="portal-card" aria-labelledby="links-title">
+        <h2 id="links-title">Shared resources</h2>
+        {% for link in shared_links %}
+          <p><a class="text-link" href="{{ link.url }}" target="_blank" rel="noopener noreferrer">{{ link.title }} <span aria-hidden="true">↗</span></a></p>
+        {% empty %}
+          <p>No active resources have been shared for this project.</p>
+        {% endfor %}
+      </section>
+    </div>
+  </div>
+</section>
+{% endblock %}

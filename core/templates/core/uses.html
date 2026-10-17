@@ -1,0 +1,13 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="page-hero"><div class="page-hero-inner"><p class="page-hero-eyebrow">Tools I use</p><h1 class="page-hero-title">The working <span>setup</span></h1><p class="page-hero-sub">A straightforward list of tools and services represented in this project and portfolio.</p></div></header>
+  <section><div class="container-c use-groups">
+    {% for group in use_groups %}
+      {% if group.items %}
+      <section class="tech-card use-group"><h2>{{ group.title }}</h2><ul class="tag-list">{% for item in group.items %}<li>{{ item }}</li>{% endfor %}</ul></section>
+      {% endif %}
+    {% endfor %}
+  </div></section>
+</div>
+{% endblock %}

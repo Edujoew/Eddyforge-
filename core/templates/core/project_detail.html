@@ -1,0 +1,100 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+<div class="page-wrap">
+  <header class="detail-hero">
+    <div class="container-c">
+      <a class="back-link-inline" href="{% url 'core:projects' %}"><i class="bi bi-arrow-left" aria-hidden="true"></i> All projects</a>
+      <p class="section-label"><i class="bi bi-layers-fill" aria-hidden="true"></i> Case study</p>
+      <h1 class="detail-title">{{ project.title }}</h1>
+      {% if project.badge %}<p class="project-card-badge"><i class="bi {{ project.badge_icon }}" aria-hidden="true"></i> {{ project.badge }}</p>{% endif %}
+      <p class="detail-summary">{{ project.short_description|default:project.description }}</p>
+      <dl class="project-meta">
+        {% if project.role %}<div><dt>Role</dt><dd>{{ project.role }}</dd></div>{% endif %}
+        {% if project.year %}<div><dt>Year</dt><dd>{{ project.year }}</dd></div>{% endif %}
+        {% if project.duration %}<div><dt>Duration</dt><dd>{{ project.duration }}</dd></div>{% endif %}
+      </dl>
+      <div class="detail-actions">
+        {% if project.live_url %}<a class="btn-primary-c" href="{{ project.live_url }}" target="_blank" rel="noopener noreferrer">View live project <i class="bi bi-arrow-up-right" aria-hidden="true"></i></a>{% endif %}
+        {% if project.repo %}<a class="btn-ghost" href="{{ project.repo }}" target="_blank" rel="noopener noreferrer"><i class="bi bi-github" aria-hidden="true"></i> View repository</a>{% endif %}
+      </div>
+    </div>
+  </header>
+
+  {% if project.cover %}
+  <div class="container-c detail-cover">
+    {% if "://" in project.cover %}
+    <img src="{{ project.cover }}" alt="{{ project.title }} cover image" width="1200" height="675">
+    {% else %}
+    <img src="{% static project.cover %}" alt="{{ project.title }} cover image" width="1200" height="675">
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <div class="container-c detail-sections">
+    {% if project.problem %}
+    <section class="detail-section">
+      <p class="section-label">01 / The problem</p>
+      <h2>What needed to change</h2>
+      <p>{{ project.problem|linebreaks }}</p>
+    </section>
+    {% endif %}
+    {% if project.approach %}
+    <section class="detail-section">
+      <p class="section-label">02 / The approach</p>
+      <h2>How it was built</h2>
+      <p>{{ project.approach|linebreaks }}</p>
+    </section>
+    {% endif %}
+    {% if project.stack_list %}
+    <section class="detail-section">
+      <p class="section-label">Tools used</p>
+      <h2>Technology</h2>
+      <ul class="tag-list">{% for item in project.stack_list %}<li>{{ item }}</li>{% endfor %}</ul>
+    </section>
+    {% endif %}
+    {% if project.images.all or project.cover %}
+    <section class="detail-section">
+      <p class="section-label">In the product</p>
+      <h2>Project gallery</h2>
+      <div class="project-gallery">
+        {% if project.cover %}
+          {% if "://" in project.cover %}
+          <button class="gallery-image" type="button" data-lightbox-trigger="{{ project.cover }}" data-lightbox-alt="{{ project.title }} cover image"><img src="{{ project.cover }}" alt="{{ project.title }} cover image" width="720" height="405" loading="lazy"></button>
+          {% else %}
+          <button class="gallery-image" type="button" data-lightbox-trigger="{% static project.cover %}" data-lightbox-alt="{{ project.title }} cover image"><img src="{% static project.cover %}" alt="{{ project.title }} cover image" width="720" height="405" loading="lazy"></button>
+          {% endif %}
+        {% endif %}
+        {% for image in project.images.all %}
+          {% if "://" in image.path_or_url %}
+          <button class="gallery-image" type="button" data-lightbox-trigger="{{ image.path_or_url }}" data-lightbox-alt="{{ image.caption|default:project.title }}"><img src="{{ image.path_or_url }}" alt="{{ image.caption|default:project.title }}" width="720" height="405" loading="lazy"></button>
+          {% else %}
+          <button class="gallery-image" type="button" data-lightbox-trigger="{% static image.path_or_url %}" data-lightbox-alt="{{ image.caption|default:project.title }}"><img src="{% static image.path_or_url %}" alt="{{ image.caption|default:project.title }}" width="720" height="405" loading="lazy"></button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+    {% endif %}
+    {% if project.results_list or project.highlights %}
+    <section class="detail-section">
+      <p class="section-label">03 / Outcomes</p>
+      <h2>What it does</h2>
+      {% if project.results_list %}<ul class="case-study-highlights">{% for result in project.results_list %}<li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>{{ result }}</li>{% endfor %}</ul>{% endif %}
+      {% if project.highlights %}<ul class="case-study-highlights">{% for highlight in project.highlights %}<li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>{{ highlight }}</li>{% endfor %}</ul>{% endif %}
+    </section>
+    {% endif %}
+  </div>
+
+  <nav class="detail-pagination container-c" aria-label="Other case studies">
+    {% if previous_project %}<a href="{{ previous_project.get_absolute_url }}"><span>Previous project</span>{{ previous_project.title }}</a>{% endif %}
+    {% if next_project %}<a href="{{ next_project.get_absolute_url }}"><span>Next project</span>{{ next_project.title }}</a>{% endif %}
+  </nav>
+  <section class="detail-cta">
+    <div class="container-c"><h2>Have a project with a similar challenge?</h2><p>Share what you are trying to build and we can work through the right next step.</p><a class="btn-primary-c" href="{% url 'core:start' %}">Start a project <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+  </section>
+</div>
+<dialog id="image-lightbox" class="image-lightbox" aria-label="Project image viewer">
+  <button type="button" data-lightbox-close class="lightbox-close" aria-label="Close image">Close <i class="bi bi-x-lg" aria-hidden="true"></i></button>
+  <img src="" alt="">
+</dialog>
+{% endblock %}

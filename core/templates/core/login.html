@@ -293,7 +293,6 @@
     <div class="login-orb"></div>
 
     <div class="login-card">
-      <!-- Logo -->
       <div class="login-logo">
         <div class="login-logo-avatar">
           <img src="{% static 'core/eddyforge-logo.png' %}" alt="Eddyforge">
@@ -301,59 +300,45 @@
         <span class="login-logo-text">Eddyforge</span>
       </div>
 
-      <!-- Header -->
-      <div class="login-eyebrow">Admin Access</div>
+      <div class="login-eyebrow">Client Portal</div>
       <h1 class="login-title">Welcome back</h1>
-      <p class="login-sub">Sign in to access the admin dashboard and manage your portfolio content.</p>
+      <p class="login-sub">Sign in to review your project updates and shared resources.</p>
 
-      <!-- Error / Success -->
-      <div class="login-error" id="loginError">
-        <i class="bi bi-exclamation-triangle-fill"></i>
-        <span id="errorMsg">Invalid credentials. Please try again.</span>
-      </div>
-      <div class="login-success" id="loginSuccess">
-        <i class="bi bi-check-circle-fill"></i>
-        <span>Authenticated! Redirecting to dashboard...</span>
-      </div>
-
-      <!-- Form -->
-      <div class="input-group">
-        <label class="form-label-c">Username</label>
-        <div class="input-wrapper">
-          <input
-            type="text"
-            id="username"
-            class="login-input"
-            placeholder="admin"
-            autocomplete="username"
-            spellcheck="false"
-          />
-          <i class="bi bi-person input-icon"></i>
+      {% if form.non_field_errors %}
+        <div class="login-error show" role="alert">
+          <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
+          <span>{{ form.non_field_errors }}</span>
         </div>
-      </div>
+      {% endif %}
 
-      <div class="input-group">
-        <label class="form-label-c">Password</label>
-        <div class="input-wrapper">
-          <input
-            type="password"
-            id="password"
-            class="login-input"
-            placeholder="••••••••••••"
-            autocomplete="current-password"
-          />
-          <i class="bi bi-lock input-icon"></i>
-          <button class="pw-toggle" id="pwToggle" type="button" tabindex="-1" aria-label="Toggle password">
-            <i class="bi bi-eye" id="pwIcon"></i>
-          </button>
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}">
+        <div class="input-group">
+          <label class="form-label-c" for="id_username">Username</label>
+          <div class="input-wrapper">
+            <input type="text" id="id_username" name="username" class="login-input"
+              value="{{ form.username.value|default_if_none:'' }}" autocomplete="username" required autofocus>
+            <i class="bi bi-person input-icon" aria-hidden="true"></i>
+          </div>
+          {{ form.username.errors }}
         </div>
-      </div>
 
-      <button class="login-btn" id="loginBtn">
-        <span id="btnText">Sign In</span>
-        <div class="spinner" id="spinner"></div>
-        <i class="bi bi-arrow-right" id="btnIcon"></i>
-      </button>
+        <div class="input-group">
+          <label class="form-label-c" for="id_password">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="id_password" name="password" class="login-input"
+              autocomplete="current-password" required>
+            <i class="bi bi-lock input-icon" aria-hidden="true"></i>
+          </div>
+          {{ form.password.errors }}
+        </div>
+
+        <button class="login-btn" type="submit">
+          <span>Sign In</span>
+          <i class="bi bi-arrow-right" aria-hidden="true"></i>
+        </button>
+      </form>
 
       <div class="security-note">
         <i class="bi bi-shield-lock-fill" style="color:var(--cyan);"></i>
@@ -366,102 +351,5 @@
     </a>
   </div>
 
-  <script>
-    // ── CREDENTIALS (SHA-256 hashed) ──
-    // Username: eddyforge_admin
-    // Password: Eddyforge@Admin2026
-    const ADMIN_USERNAME_HASH = '19321ea240a35d891b80c4b2b0521f320f63538191fc77bd311ed26678bd0cec'; // eddyforge_admin
-    const ADMIN_PASSWORD_HASH = '3da5e158f935255920c74ce4061ec95d0efbdd8b568ef9b4a236c63ed322b638'; // Eddyforge@Admin2026
-
-    async function sha256(str) {
-      const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
-      return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
-    }
-
-    // If already logged in, go straight to admin
-    if (sessionStorage.getItem('ef_admin_auth') === 'granted') {
-      window.location.href = "{% url 'core:admin' %}";
-    }
-
-    const loginBtn  = document.getElementById('loginBtn');
-    const btnText   = document.getElementById('btnText');
-    const btnIcon   = document.getElementById('btnIcon');
-    const spinner   = document.getElementById('spinner');
-    const errorEl   = document.getElementById('loginError');
-    const successEl = document.getElementById('loginSuccess');
-    const pwToggle  = document.getElementById('pwToggle');
-    const pwInput   = document.getElementById('password');
-    const pwIcon    = document.getElementById('pwIcon');
-
-    // Password visibility toggle
-    pwToggle.addEventListener('click', () => {
-      const isHidden = pwInput.type === 'password';
-      pwInput.type = isHidden ? 'text' : 'password';
-      pwIcon.className = isHidden ? 'bi bi-eye-slash' : 'bi bi-eye';
-    });
-
-    // Submit on Enter
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') handleLogin();
-    });
-
-    loginBtn.addEventListener('click', handleLogin);
-
-    function showLoading(on) {
-      loginBtn.disabled = on;
-      btnText.textContent = on ? 'Verifying...' : 'Sign In';
-      spinner.style.display = on ? 'block' : 'none';
-      btnIcon.style.display = on ? 'none' : 'block';
-    }
-
-    async function handleLogin() {
-      const username = document.getElementById('username').value.trim();
-      const password = pwInput.value;
-
-      errorEl.classList.remove('show');
-      successEl.classList.remove('show');
-
-      if (!username || !password) {
-        document.getElementById('errorMsg').textContent = 'Please enter both username and password.';
-        errorEl.classList.add('show');
-        return;
-      }
-
-      showLoading(true);
-
-      // Small artificial delay so it feels like a real auth check
-      await new Promise(r => setTimeout(r, 800));
-
-      const [uHash, pHash] = await Promise.all([sha256(username), sha256(password)]);
-
-      if (uHash === ADMIN_USERNAME_HASH && pHash === ADMIN_PASSWORD_HASH) {
-        successEl.classList.add('show');
-        sessionStorage.setItem('ef_admin_auth', 'granted');
-        sessionStorage.setItem('ef_admin_user', username);
-        setTimeout(() => { window.location.href = "{% url 'core:admin' %}"; }, 1000);
-      } else {
-        showLoading(false);
-        document.getElementById('errorMsg').textContent = 'Invalid credentials. Please try again.';
-        errorEl.classList.add('show');
-        // Shake the card
-        const card = document.querySelector('.login-card');
-        card.style.animation = 'shake .4s ease';
-        setTimeout(() => card.style.animation = '', 400);
-      }
-    }
-
-    // Shake keyframe
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes shake {
-        0%,100% { transform: translateX(0); }
-        20%      { transform: translateX(-8px); }
-        40%      { transform: translateX(8px); }
-        60%      { transform: translateX(-5px); }
-        80%      { transform: translateX(5px); }
-      }
-    `;
-    document.head.appendChild(style);
-  </script>
 </body>
 </html>

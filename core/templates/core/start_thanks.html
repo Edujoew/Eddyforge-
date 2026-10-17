@@ -1,0 +1,26 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <section class="thanks-section">
+    <div class="container-c thanks-card tech-card">
+      <p class="section-label"><i class="bi bi-check-circle-fill" aria-hidden="true"></i> Brief received</p>
+      <h1>Thanks for sharing your project.</h1>
+      <p class="detail-summary">I’ll review the details and get back to you {{ response_time_text }}.</p>
+      <h2>What happens next</h2>
+      <ol class="next-steps">
+        <li><span>01</span><div><strong>I review the brief</strong><p>I’ll look over the goal, timing, and constraints you shared.</p></div></li>
+        <li><span>02</span><div><strong>We clarify the scope</strong><p>If anything needs more detail, I’ll follow up with focused questions.</p></div></li>
+        <li><span>03</span><div><strong>You get a clear next step</strong><p>We can agree on the right scope and a practical way to proceed.</p></div></li>
+      </ol>
+      {% if booking_url %}
+      <div class="booking-wrap">
+        <h2>Prefer to pick a time?</h2>
+        <p>You can book a conversation using the calendar below, or <a href="{{ booking_url }}" target="_blank" rel="noopener noreferrer">open the booking page in a new tab</a>.</p>
+        <iframe src="{{ booking_url }}" title="Book a conversation with Eddyforge" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>
+      </div>
+      {% endif %}
+      <a class="btn-ghost" href="{% url 'core:home' %}">Back to Eddyforge</a>
+    </div>
+  </section>
+</div>
+{% endblock %}

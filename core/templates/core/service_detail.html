@@ -1,0 +1,65 @@
+{% extends "core/base.html" %}
+{% block content %}
+<div class="page-wrap">
+  <header class="detail-hero">
+    <div class="container-c">
+      <a class="back-link-inline" href="{% url 'core:services' %}"><i class="bi bi-arrow-left" aria-hidden="true"></i> All services</a>
+      <p class="section-label"><i class="bi {{ service.icon|default:'bi-code-slash' }}" aria-hidden="true"></i> Eddyforge services</p>
+      <h1 class="detail-title">{{ service.title }}</h1>
+      <p class="detail-summary">{{ service.intro|default:service.long_description|default:service.description }}</p>
+      <p class="service-audience">{{ audience_copy }}</p>
+      <a class="btn-primary-c" href="{% url 'core:start' %}?service={{ service.slug }}">Start a project <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+    </div>
+  </header>
+  <div class="container-c detail-sections">
+    {% if service.deliverables_list %}
+    <section class="detail-section">
+      <p class="section-label">What we can scope</p>
+      <h2>Possible deliverables</h2>
+      <ul class="service-deliverables">{% for item in service.deliverables_list %}<li><i class="bi bi-check2" aria-hidden="true"></i>{{ item }}</li>{% endfor %}</ul>
+      <p class="service-draft-note">The final scope is agreed for each project after we understand its requirements.</p>
+    </section>
+    {% endif %}
+    {% if service.tech or service.tags %}
+    <section class="detail-section">
+      <p class="section-label">Tools and focus</p>
+      <h2>Relevant technology</h2>
+      {% if service.tech %}<p>{{ service.tech }}</p>{% endif %}
+      {% if service.tags %}<ul class="tag-list">{% for tag in service.tags %}<li>{{ tag }}</li>{% endfor %}</ul>{% endif %}
+    </section>
+    {% endif %}
+    <section class="detail-section">
+      <p class="section-label">Planning</p>
+      <h2>Timing</h2>
+      <p>{{ service.timeline|default:"Timing is agreed after the project requirements and scope are clear." }}</p>
+    </section>
+  </div>
+  {% include "core/includes/process_steps.html" %}
+  {% if related_projects %}
+  <section>
+    <div class="container-c">
+      <p class="section-label">Selected work</p>
+      <h2 class="section-title">Related case studies</h2>
+      <div class="writing-grid">
+        {% for project in related_projects %}<article class="tech-card writing-card"><h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3><p>{{ project.short_description|default:project.description }}</p></article>{% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  {% if faqs %}
+  <section class="service-faq-section">
+    <div class="container-c">
+      <p class="section-label">Questions</p>
+      <h2 class="section-title">Frequently asked questions</h2>
+      <div class="service-faqs">
+        {% for faq in faqs %}<details class="tech-card"><summary>{{ faq.question }}</summary><div>{{ faq.answer|linebreaks }}</div></details>{% endfor %}
+      </div>
+    </div>
+  </section>
+  {% endif %}
+  <section class="detail-cta">
+    <div class="container-c"><h2>Have a specific goal in mind?</h2><p>Share your brief and we can agree on scope and a practical next step.</p><a class="btn-primary-c" href="{% url 'core:start' %}?service={{ service.slug }}">Start a project <i class="bi bi-arrow-right" aria-hidden="true"></i></a></div>
+  </section>
+</div>
+{% if faq_schema %}<script type="application/ld+json">{{ faq_schema|safe }}</script>{% endif %}
+{% endblock %}

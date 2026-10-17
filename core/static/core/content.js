@@ -16,15 +16,27 @@ function cmsIcon(cls) {
   return `<i class="bi ${cls}"></i>`;
 }
 
+function cmsServiceSlug(title) {
+  const slugs = {
+    'e-commerce development': 'ecommerce',
+    'corporate web solutions': 'corporate-web',
+    'corporate web solution': 'corporate-web',
+    'custom software apps': 'custom-software',
+    'custom software app': 'custom-software',
+    'ui / ux design & frontend': 'ui-ux'
+  };
+  return slugs[title.trim().toLowerCase()] || '';
+}
+
 function renderServicesGrid(data) {
   const el = document.getElementById('services-grid');
-  if (!el) return;
+  if (!el || el.dataset.serverRendered === 'true') return;
   el.innerHTML = data.services.map((s, i) => `
     <div class="tech-card reveal" style="display:grid;grid-template-columns:80px 1fr auto;gap:32px;align-items:center;">
       <div style="width:72px;height:72px;border-radius:16px;background:var(--cyan-dim);border:1px solid var(--border-h);display:grid;place-items:center;font-size:2rem;color:var(--cyan);flex-shrink:0;">${cmsIcon(s.icon)}</div>
       <div>
         <div style="display:flex;align-items:center;gap:14px;margin-bottom:10px;">
-          <span style="font-family:var(--display);font-weight:700;font-size:1.3rem;color:#fff;">${s.title}</span>
+          <a href="/services/${cmsServiceSlug(s.title)}/" style="font-family:var(--display);font-weight:700;font-size:1.3rem;color:#fff;text-decoration:none;">${s.title}</a>
           <span style="font-family:var(--mono);font-size:.65rem;color:var(--muted);letter-spacing:.1em;border:1px solid var(--border);padding:3px 10px;border-radius:50px;">${String(i + 1).padStart(2, '0')}</span>
         </div>
         <p style="color:var(--muted);font-size:.95rem;line-height:1.8;max-width:620px;">${s.longDescription || s.description}</p>
@@ -32,7 +44,7 @@ function renderServicesGrid(data) {
           ${(s.tags || []).map(t => `<span style="font-family:var(--mono);font-size:.7rem;color:var(--cyan);background:var(--cyan-dim);padding:4px 10px;border-radius:6px;">${t}</span>`).join('')}
         </div>
       </div>
-      <a href="/contact/" class="btn-ghost" style="white-space:nowrap;flex-shrink:0;">Get Quote <i class="bi bi-arrow-right"></i></a>
+      <a href="/start/${cmsServiceSlug(s.title) ? `?service=${encodeURIComponent(cmsServiceSlug(s.title))}` : ''}" class="btn-ghost" style="white-space:nowrap;flex-shrink:0;">Get Quote <i class="bi bi-arrow-right"></i></a>
     </div>
   `).join('');
 }
@@ -43,7 +55,7 @@ function renderServicesPreview(data) {
   el.innerHTML = data.services.slice(0, 3).map((s, i) => `
     <div class="tech-card reveal">
       <div style="width:52px;height:52px;border-radius:12px;background:var(--cyan-dim);display:grid;place-items:center;font-size:1.4rem;color:var(--cyan);margin-bottom:24px;">${cmsIcon(s.icon)}</div>
-      <div style="font-family:var(--display);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:8px;">${s.title}</div>
+      <a href="/services/${cmsServiceSlug(s.title)}/" style="font-family:var(--display);font-weight:700;font-size:1.1rem;color:#fff;margin-bottom:8px;text-decoration:none;">${s.title}</a>
       <p style="color:var(--muted);font-size:.93rem;">${s.description}</p>
       <span style="position:absolute;bottom:20px;right:20px;font-family:var(--mono);font-size:.7rem;color:var(--border-h);">${String(i + 1).padStart(2, '0')}</span>
     </div>
@@ -52,7 +64,7 @@ function renderServicesPreview(data) {
 
 function renderProjectsFeatured(data) {
   const el = document.getElementById('projects-featured');
-  if (!el) return;
+  if (!el || el.dataset.serverRendered === 'true') return;
   el.innerHTML = data.projects.map((p) => {
     const media = `
       <div style="background:var(--bg-2);border:1px solid var(--border);border-radius:10px;height:260px;display:grid;place-items:center;position:relative;overflow:hidden;${p.imageFirst ? 'order:-1;' : ''}">
@@ -81,7 +93,7 @@ function renderProjectsFeatured(data) {
 
 function renderProjectsTeaser(data) {
   const el = document.getElementById('projects-teaser');
-  if (!el) return;
+  if (!el || el.dataset.serverRendered === 'true') return;
   el.innerHTML = data.projects.slice(0, 2).map(p => `
     <div class="tech-card reveal" style="display:flex;flex-direction:column;gap:16px;">
       <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(${p.accent},.1);border:1px solid rgba(${p.accent},.25);color:rgb(${p.accent});font-family:var(--mono);font-size:.7rem;padding:4px 12px;border-radius:50px;width:fit-content;">${cmsIcon(p.badgeIcon)} ${p.badge}</div>
