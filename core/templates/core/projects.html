@@ -13,7 +13,7 @@
       </div>
     </div>
 
-    <!-- FEATURED PROJECTS -->
+    <!-- FEATURED PROJECTS FROM DATABASE -->
     <section style="background:var(--bg);">
       <div class="container-c">
         <div class="reveal">
@@ -22,40 +22,35 @@
           <p class="section-sub">A curated selection of projects that demonstrate depth and range.</p>
         </div>
 
-        <div id="projects-featured"{% if server_projects %} data-server-rendered="true"{% endif %}>
+        <div style="display: flex; flex-direction: column; gap: 24px; margin-top: 32px;">
           {% for project in published_projects %}
-          <article class="tech-card reveal case-study-card">
-            <div class="case-study-copy">
-              <span class="project-card-badge"><i class="bi {{ project.badge_icon }}" aria-hidden="true"></i> {{ project.badge|default:"Selected work" }}</span>
-              <h3><a href="{{ project.get_absolute_url }}">{{ project.title }}</a></h3>
-              <p>{{ project.short_description|default:project.description }}</p>
-              {% if project.highlights %}
-              <ul class="case-study-highlights">
-                {% for highlight in project.highlights %}
-                <li><i class="bi bi-check-circle-fill" aria-hidden="true"></i>{{ highlight }}</li>
-                {% endfor %}
-              </ul>
-              {% endif %}
-              <a class="btn-primary-c" href="{{ project.get_absolute_url }}">Read case study <i class="bi bi-arrow-right" aria-hidden="true"></i></a>
+          <article class="tech-card reveal case-study-card" style="display: flex; justify-content: space-between; background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 32px;">
+            <div class="case-study-copy" style="flex: 1;">
+              <span class="project-card-badge" style="font-family: var(--mono); font-size: 0.72rem; color: var(--cyan); background: var(--cyan-dim); padding: 4px 12px; border-radius: 50px; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 14px;">
+                <i class="bi bi-stack" aria-hidden="true"></i> {{ project.badge|default:"Selected work" }}
+              </span>
+              <h3 style="color: #fff; font-size: 1.4rem; font-weight: 700; margin-bottom: 10px;">
+                <a href="{% url 'core:project_detail' project.slug %}" style="color: #fff; text-decoration: none;">{{ project.title }}</a>
+              </h3>
+              <p style="color: var(--muted); font-size: 0.92rem; line-height: 1.6; margin-bottom: 20px;">
+                {{ project.short_description|default:project.description }}
+              </p>
+              <a href="{% url 'core:project_detail' project.slug %}" style="display: inline-flex; align-items: center; gap: 8px; color: var(--bg); background: var(--cyan); padding: 10px 20px; border-radius: 8px; font-family: var(--body); font-size: 0.85rem; font-weight: 700; text-decoration: none; margin-top: 10px;">
+                Read case study <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </a>
             </div>
-            <a class="case-study-cover" href="{{ project.get_absolute_url }}" aria-label="Read the {{ project.title }} case study">
-              {% if project.cover %}
-                {% if "://" in project.cover %}
-                <img src="{{ project.cover }}" alt="{{ project.title }} project preview" width="720" height="480" loading="lazy">
-                {% else %}
-                {% load static %}<img src="{% static project.cover %}" alt="{{ project.title }} project preview" width="720" height="480" loading="lazy">
-                {% endif %}
-              {% else %}
-              <span class="case-study-placeholder"><i class="bi {{ project.icon|default:'bi-window' }}" aria-hidden="true"></i></span>
-              {% endif %}
-            </a>
           </article>
+          {% empty %}
+          <div style="text-align: center; padding: 60px 20px; color: var(--muted);">
+            <i class="bi bi-folder2-open" style="font-size: 2.5rem; display: block; margin-bottom: 12px; color: var(--border-h);"></i>
+            <p style="font-size: 1rem;">No projects published in the database yet. Add or publish them through your Admin panel.</p>
+          </div>
           {% endfor %}
         </div>
       </div>
     </section>
 
-    <!-- SMALLER PROJECTS GRID -->
+    <!-- OTHER REPOSITORIES -->
     <section style="background:var(--bg-2);">
       <div class="container-c">
         <div class="reveal">
@@ -63,14 +58,14 @@
           <h2 class="section-title">Other Repositories</h2>
           <p class="section-sub">Explore more on GitHub — experiments, utilities, and open source contributions.</p>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">
-          <div class="tech-card reveal" style="padding:28px 24px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px; margin-top: 24px;">
+          <div class="tech-card reveal" style="padding:28px 24px; background:var(--bg-card); border:1px solid var(--border); border-radius:14px;">
             <i class="bi bi-github" style="font-size:1.4rem;color:var(--muted);margin-bottom:14px;display:block;"></i>
             <div style="font-family:var(--display);font-weight:700;color:#fff;margin-bottom:8px;">More Projects</div>
             <p style="color:var(--muted);font-size:.88rem;line-height:1.7;margin-bottom:20px;">Visit my GitHub profile to see all public repositories, contributions, and work in progress.</p>
             <a href="https://github.com/edujoew" target="_blank" style="display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:.75rem;color:var(--cyan);text-decoration:none;letter-spacing:.06em;text-transform:uppercase;">github.com/edujoew <i class="bi bi-arrow-up-right"></i></a>
           </div>
-          <div class="tech-card reveal" style="padding:28px 24px;background:linear-gradient(135deg,var(--bg-card),rgba(0,214,255,.04));">
+          <div class="tech-card reveal" style="padding:28px 24px;background:linear-gradient(135deg,var(--bg-card),rgba(0,214,255,.04)); border:1px solid var(--border); border-radius:14px;">
             <i class="bi bi-plus-circle-dotted" style="font-size:1.4rem;color:var(--cyan);margin-bottom:14px;display:block;"></i>
             <div style="font-family:var(--display);font-weight:700;color:#fff;margin-bottom:8px;">Got a Project?</div>
             <p style="color:var(--muted);font-size:.88rem;line-height:1.7;margin-bottom:20px;">I'm open to new collaborations. Let's build something that could be featured here next.</p>
@@ -80,16 +75,5 @@
       </div>
     </section>
 
-    <!-- TESTIMONIALS -->
-    <section style="background:var(--bg);">
-      <div class="container-c">
-        <div class="reveal">
-          <div class="section-label"><i class="bi bi-chat-quote-fill"></i> Reviews</div>
-          <h2 class="section-title">Client Feedback</h2>
-        </div>
-        <div id="testimonials-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;"></div>
-      </div>
-    </section>
-
-  </div>
+</div>
 {% endblock %}

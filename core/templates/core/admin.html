@@ -8,173 +8,280 @@
   <link rel="icon" type="image/png" href="{% static 'core/eddyforge-logo.png' %}">
   <link rel="stylesheet" href="{% static 'core/style.css' %}">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
   <style>
-    .admin-wrap { display: flex; min-height: 100vh; padding-top: 0; }
-
-    .sidebar {
-      width: 260px; background: var(--bg-2); border-right: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      position: fixed; top: 0; left: 0; bottom: 0; z-index: 200;
-      transition: transform .3s ease;
-    }
-    .sidebar-header { padding: 24px 24px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 12px; }
-    .sidebar-logo { width: 38px; height: 38px; border-radius: 50%; border: 2px solid var(--cyan); background: var(--bg-card); overflow: hidden; flex-shrink: 0; box-shadow: 0 0 0 3px var(--cyan-dim); }
-    .sidebar-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
-    .sidebar-brand { font-family: var(--body); font-weight: 800; font-size: 1.05rem; color: #fff; letter-spacing: -.02em; line-height: 1; }
-    .sidebar-brand small { display: block; font-family: var(--mono); font-size: .6rem; color: var(--cyan); letter-spacing: .1em; text-transform: uppercase; font-weight: 400; margin-top: 2px; }
-    .sidebar-nav { padding: 20px 16px; flex: 1; overflow-y: auto; }
-    .sidebar-section-label { font-family: var(--mono); font-size: .6rem; color: var(--muted); letter-spacing: .15em; text-transform: uppercase; padding: 0 10px; margin: 16px 0 8px; }
-    .sidebar-section-label:first-child { margin-top: 0; }
-    .sidebar-link {
-      display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 10px;
-      color: var(--muted); text-decoration: none; font-size: .9rem; font-weight: 500;
-      transition: background .2s, color .2s; cursor: pointer; border: none; background: none;
-      width: 100%; text-align: left; margin-bottom: 2px;
-    }
-    .sidebar-link:hover { background: rgba(255,255,255,.05); color: var(--text); }
-    .sidebar-link.active { background: var(--cyan-dim); color: var(--cyan); }
-    .sidebar-link i { font-size: 1rem; flex-shrink: 0; width: 18px; text-align: center; }
-    .sidebar-footer { padding: 16px; border-top: 1px solid var(--border); }
-    .admin-badge { display: flex; align-items: center; gap: 10px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 12px; }
-    .admin-badge-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--cyan); flex-shrink: 0; animation: blink 2s ease-in-out infinite; }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-    .admin-badge-text { font-family: var(--mono); font-size: .72rem; color: var(--text); }
-    .admin-badge-text small { display: block; color: var(--muted); font-size: .65rem; }
-    .logout-btn {
-      display: flex; align-items: center; gap: 8px; width: 100%; padding: 10px 12px; border-radius: 10px;
-      background: none; border: 1px solid rgba(239,68,68,.2); color: #f87171; font-size: .875rem; font-weight: 500;
-      cursor: pointer; transition: background .2s, border-color .2s;
-    }
-    .logout-btn:hover { background: rgba(239,68,68,.08); border-color: rgba(239,68,68,.4); }
-
-    .admin-main { margin-left: 260px; flex: 1; min-width: 0; }
-    .admin-topbar {
-      position: sticky; top: 0; z-index: 100; background: rgba(6,8,16,.9);
-      backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border); padding: 0 32px; height: 64px;
-      display: flex; align-items: center; justify-content: space-between;
-    }
-    .topbar-title { font-family: var(--body); font-weight: 700; font-size: 1rem; color: #fff; }
-    .topbar-title span { color: var(--muted); font-weight: 400; font-size: .875rem; margin-left: 8px; }
-    .topbar-actions { display: flex; align-items: center; gap: 10px; }
-    .topbar-visit {
-      display: flex; align-items: center; gap: 6px; font-family: var(--mono); font-size: .72rem; color: var(--muted);
-      text-decoration: none; padding: 7px 14px; border-radius: 8px; border: 1px solid var(--border);
-      transition: color .2s, border-color .2s;
-    }
-    .topbar-visit:hover { color: var(--cyan); border-color: var(--border-h); }
-    .topbar-save {
-      display: flex; align-items: center; gap: 6px; font-family: var(--body); font-weight: 700; font-size: .8rem;
-      color: var(--bg); background: var(--cyan); border: none; padding: 8px 16px; border-radius: 8px;
-      cursor: pointer; transition: box-shadow .2s, transform .2s;
-    }
-    .topbar-save:hover { box-shadow: 0 0 24px var(--cyan-glow); transform: translateY(-1px); }
-    .topbar-save.dirty { animation: dirtyPulse 1.6s ease-in-out infinite; }
-    @keyframes dirtyPulse { 0%,100%{box-shadow:0 0 0 0 var(--cyan-glow)} 50%{box-shadow:0 0 0 6px transparent} }
-
-    .sidebar-toggle { display: none; background: none; border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 7px 10px; cursor: pointer; font-size: 1.1rem; }
-
-    .admin-content { padding: 32px; max-width: 1100px; }
-    .panel { display: none; }
-    .panel.active { display: block; }
-
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .stat-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 16px; transition: border-color .2s; }
-    .stat-card:hover { border-color: var(--border-h); }
-    .stat-icon { width: 44px; height: 44px; border-radius: 10px; background: var(--cyan-dim); display: grid; place-items: center; font-size: 1.2rem; color: var(--cyan); flex-shrink: 0; }
-    .stat-value { font-family: var(--body); font-weight: 800; font-size: 1.6rem; color: #fff; line-height: 1; }
-    .stat-label { font-family: var(--mono); font-size: .68rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; margin-top: 2px; }
-
-    .section-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
-    .section-hd h2 { font-family: var(--body); font-weight: 700; font-size: 1.1rem; color: #fff; letter-spacing: -.02em; }
-    .section-hd p { font-size: .83rem; color: var(--muted); margin-top: 2px; }
-
-    .tag { display: inline-flex; align-items: center; gap: 5px; font-family: var(--mono); font-size: .68rem; padding: 3px 10px; border-radius: 50px; background: var(--cyan-dim); color: var(--cyan); border: 1px solid rgba(0,214,255,.2); }
-
-    .action-btn {
-      background: none; border: 1px solid var(--border); border-radius: 6px; color: var(--muted); padding: 7px 14px;
-      font-size: .8rem; cursor: pointer; transition: color .2s, border-color .2s; text-decoration: none;
-      display: inline-flex; align-items: center; gap: 6px; font-family: var(--body);
-    }
-    .action-btn:hover { color: var(--cyan); border-color: var(--border-h); }
-    .action-btn.danger { color: #f87171; border-color: rgba(239,68,68,.25); }
-    .action-btn.danger:hover { color: #fff; background: #f87171; border-color: #f87171; }
-    .action-btn.primary { color: var(--cyan); border-color: var(--border-h); background: var(--cyan-dim); }
-
-    .info-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-
-    .save-btn {
-      display: inline-flex; align-items: center; gap: 8px; background: var(--cyan); color: var(--bg); border: none;
-      border-radius: 50px; padding: 11px 24px; font-family: var(--body); font-weight: 700; font-size: .875rem;
-      cursor: pointer; transition: box-shadow .25s, transform .2s;
-    }
-    .save-btn:hover { box-shadow: 0 0 30px var(--cyan-glow); transform: translateY(-1px); }
-
-    .toast {
-      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: var(--bg-card); border: 1px solid var(--border-h); border-radius: 50px; padding: 12px 24px;
-      display: flex; align-items: center; gap: 10px; color: var(--cyan); font-size: .875rem; font-weight: 500;
-      z-index: 9999; transition: transform .35s cubic-bezier(.34,1.56,.64,1); white-space: nowrap; box-shadow: 0 8px 32px rgba(0,0,0,.4);
-    }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-
-    .quick-links { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
-    .quick-link {
-      display: flex; flex-direction: column; align-items: center; gap: 10px; background: var(--bg-card);
-      border: 1px solid var(--border); border-radius: 12px; padding: 24px 16px; text-decoration: none; color: var(--muted);
-      font-size: .85rem; font-weight: 500; transition: border-color .2s, color .2s, transform .2s; text-align: center; cursor: pointer;
-    }
-    .quick-link:hover { border-color: var(--border-h); color: var(--cyan); transform: translateY(-3px); }
-    .quick-link i { font-size: 1.6rem; color: var(--cyan); }
-
-    .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.6); z-index: 199; }
-
-    .editor-toolbar { display: flex; justify-content: flex-end; margin-bottom: 16px; }
-    .editor-list { display: flex; flex-direction: column; gap: 16px; }
-    .editor-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; }
-    .editor-card-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; gap: 12px; }
-    .editor-card-badge { font-family: var(--mono); font-size: .68rem; color: var(--muted); border: 1px solid var(--border); padding: 3px 10px; border-radius: 50px; }
-    .field-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-    .field-grid.full { grid-template-columns: 1fr; }
-    @media (max-width: 640px) { .field-grid { grid-template-columns: 1fr; } }
-    .field-block label { display: block; font-family: var(--mono); font-size: .65rem; color: var(--cyan); letter-spacing: .08em; text-transform: uppercase; margin-bottom: 6px; }
-    .field-block textarea.form-input { min-height: 70px; line-height: 1.6; }
-    .icon-live { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 8px; background: var(--cyan-dim); color: var(--cyan); flex-shrink: 0; }
-    .icon-input-row { display: flex; align-items: center; gap: 10px; }
-    .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: .85rem; color: var(--text); }
-    .checkbox-row input { width: 16px; height: 16px; accent-color: var(--cyan); }
-    .accent-row { display: flex; gap: 8px; align-items: center; }
-    .accent-swatch { width: 26px; height: 26px; border-radius: 6px; border: 2px solid transparent; cursor: pointer; flex-shrink: 0; }
-    .accent-swatch.selected { border-color: #fff; }
-
-    .empty-state { text-align: center; padding: 48px 24px; color: var(--muted); }
-    .empty-state i { font-size: 2rem; color: var(--border-h); display: block; margin-bottom: 12px; }
-
-    .data-banner {
-      display: flex; align-items: center; gap: 12px; background: rgba(0,214,255,.06); border: 1px solid var(--border-h);
-      border-radius: 10px; padding: 12px 18px; margin-bottom: 24px; font-size: .85rem; color: var(--text); flex-wrap: wrap;
-    }
-    .data-banner i { color: var(--cyan); font-size: 1rem; }
-    .data-banner.warn { background: rgba(255,179,0,.06); border-color: rgba(255,179,0,.35); }
-    .data-banner.warn i { color: var(--gold); }
-
-    .json-preview {
-      width: 100%; min-height: 260px; background: var(--bg); border: 1px solid var(--border); border-radius: 10px;
-      color: var(--text); font-family: 'Courier New', monospace; font-size: .78rem; padding: 16px; resize: vertical;
-    }
-    .file-drop {
-      border: 1px dashed var(--border-h); border-radius: 10px; padding: 20px; text-align: center; color: var(--muted); font-size: .85rem;
+    :root{
+      --bg:#060810;
+      --bg-2:#0c0f1a;
+      --bg-card:#111520;
+      --bg-raised:#171c2a;
+      --border:#1a2035;
+      --border-h:#2a3550;
+      --cyan:#38bdf8;
+      --cyan-dim:rgba(56,189,248,0.1);
+      --cyan-glow:rgba(56,189,248,0.35);
+      --gold:#f59e0b;
+      --text:#e2e8f0;
+      --muted:#4a5568;
+      --body:'Inter',sans-serif;
+      --mono:'JetBrains Mono',monospace;
     }
 
-    @media (max-width: 900px) {
-      .sidebar { transform: translateX(-100%); }
-      .sidebar.open { transform: translateX(0); }
-      .sidebar-overlay.show { display: block; }
-      .admin-main { margin-left: 0; }
-      .sidebar-toggle { display: flex; align-items: center; }
-      .admin-content { padding: 20px; }
-      .admin-topbar { padding: 0 20px; }
-      .topbar-save span.label-full { display: none; }
+    *, *::before, *::after{ box-sizing:border-box; margin:0; padding:0; }
+    html{ scroll-behavior:smooth; }
+    body{
+      font-family:var(--body);
+      background:var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    .admin-wrap{ display:flex; min-height:100vh; }
+
+    .sidebar{
+      width:256px; background:var(--bg-2);
+      border-right:1px solid var(--border);
+      display:flex; flex-direction:column;
+      position:fixed; top:0; left:0; bottom:0; z-index:200;
+      transition:transform .3s ease;
+    }
+
+    .sidebar-header{
+      padding:20px 20px 18px;
+      border-bottom:1px solid var(--border);
+      display:flex; align-items:center; gap:12px;
+    }
+    .sidebar-logo{
+      width:36px; height:36px; border-radius:10px;
+      border:1.5px solid var(--border-h);
+      background:var(--bg-card); overflow:hidden;
+      flex-shrink:0; box-shadow:0 0 0 3px var(--cyan-dim);
+    }
+    .sidebar-logo img{ width:100%; height:100%; object-fit:contain; display:block; }
+    .sidebar-brand{
+      font-family:'Sora',sans-serif;
+      font-weight:800; font-size:0.95rem; color:#fff; letter-spacing:-0.02em; line-height:1;
+    }
+    .sidebar-brand small{
+      display:block; font-family:var(--mono);
+      font-size:0.58rem; color:var(--cyan);
+      letter-spacing:0.1em; text-transform:uppercase; font-weight:400; margin-top:3px;
+    }
+
+    .sidebar-nav{ padding:14px 12px; flex:1; overflow-y:auto; }
+    .sidebar-section-label{
+      font-family:var(--mono); font-size:0.58rem; color:var(--muted);
+      letter-spacing:0.15em; text-transform:uppercase;
+      padding:0 10px; margin:16px 0 6px;
+    }
+    .sidebar-section-label:first-child{ margin-top:0; }
+
+    .sidebar-link{
+      display:flex; align-items:center; gap:10px;
+      padding:9px 12px; border-radius:9px;
+      color:var(--muted); text-decoration:none;
+      font-size:0.86rem; font-weight:500;
+      transition:background .15s, color .15s;
+      cursor:pointer; border:none; background:none;
+      width:100%; text-align:left; margin-bottom:1px;
+      position:relative;
+    }
+    .sidebar-link:hover{ background:rgba(255,255,255,0.04); color:var(--text); }
+    .sidebar-link.active{
+      background:var(--cyan-dim); color:var(--cyan);
+    }
+    .sidebar-link.active::before{
+      content:'';
+      position:absolute; left:0; top:20%; bottom:20%;
+      width:3px; border-radius:0 2px 2px 0;
+      background:var(--cyan);
+    }
+    .sidebar-link i{ font-size:0.95rem; flex-shrink:0; width:16px; text-align:center; }
+
+    .sidebar-footer{
+      padding:14px; border-top:1px solid var(--border);
+    }
+    .admin-badge{
+      display:flex; align-items:center; gap:10px;
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:10px; padding:10px 12px; margin-bottom:10px;
+    }
+    .admin-badge-dot{
+      width:7px; height:7px; border-radius:50%;
+      background:var(--cyan); flex-shrink:0;
+      animation:blink 2s ease-in-out infinite;
+      box-shadow:0 0 6px var(--cyan);
+    }
+    @keyframes blink{ 0%,100%{opacity:1} 50%{opacity:0.3} }
+    .admin-badge-text{ font-family:var(--mono); font-size:0.72rem; color:var(--text); }
+    .admin-badge-text small{ display:block; color:var(--muted); font-size:0.62rem; margin-top:1px; }
+
+    .logout-btn{
+      display:flex; align-items:center; gap:8px; width:100%;
+      padding:9px 12px; border-radius:9px;
+      background:none; border:1px solid rgba(239,68,68,0.2);
+      color:#f87171; font-size:0.84rem; font-weight:500;
+      cursor:pointer; transition:background .15s, border-color .15s;
+    }
+    .logout-btn:hover{ background:rgba(239,68,68,0.08); border-color:rgba(239,68,68,0.4); }
+
+    .admin-main{ margin-left:256px; flex:1; min-width:0; }
+
+    .admin-topbar{
+      position:sticky; top:0; z-index:100;
+      background:rgba(6,8,16,0.88);
+      backdrop-filter:blur(18px); -webkit-backdrop-filter:blur(18px);
+      border-bottom:1px solid var(--border);
+      padding:0 28px; height:58px;
+      display:flex; align-items:center; justify-content:space-between;
+    }
+    .topbar-left{ display:flex; align-items:center; gap:12px; }
+    .topbar-title{
+      font-family:var(--body); font-weight:700; font-size:0.9rem; color:#fff;
+    }
+    .topbar-title span{ color:var(--muted); font-weight:400; font-size:0.82rem; margin-left:6px; }
+    .topbar-actions{ display:flex; align-items:center; gap:8px; }
+
+    .topbar-visit{
+      display:flex; align-items:center; gap:6px;
+      font-family:var(--mono); font-size:0.7rem; color:var(--muted);
+      text-decoration:none; padding:6px 12px; border-radius:7px;
+      border:1px solid var(--border); transition:color .15s, border-color .15s;
+    }
+    .topbar-visit:hover{ color:var(--cyan); border-color:var(--border-h); }
+    .topbar-save{
+      display:flex; align-items:center; gap:6px;
+      font-family:var(--body); font-weight:700; font-size:0.8rem;
+      color:var(--bg); background:var(--cyan); border:none;
+      padding:7px 16px; border-radius:7px; cursor:pointer;
+      transition:box-shadow .2s, transform .2s;
+    }
+    .topbar-save:hover{ box-shadow:0 0 20px var(--cyan-glow); transform:translateY(-1px); }
+
+    .sidebar-toggle{
+      display:none; background:none; border:1px solid var(--border);
+      color:var(--text); border-radius:7px; padding:6px 9px;
+      cursor:pointer; font-size:1.1rem;
+    }
+
+    .admin-content{ padding:28px; max-width:1080px; }
+
+    .panel{ display:none; }
+    .panel.active{ display:block; animation:panelIn .25s ease both; }
+    @keyframes panelIn{ from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+
+    .stats-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      gap:14px; margin-bottom:28px;
+    }
+    .stat-card{
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:14px; padding:18px 20px;
+      display:flex; align-items:center; gap:14px;
+      transition:border-color .2s, transform .2s;
+    }
+    .stat-card:hover{ border-color:var(--border-h); transform:translateY(-2px); }
+    .stat-icon{
+      width:42px; height:42px; border-radius:10px;
+      background:var(--cyan-dim);
+      display:grid; place-items:center;
+      font-size:1.1rem; color:var(--cyan); flex-shrink:0;
+    }
+    .stat-value{
+      font-family:'Sora',sans-serif; font-weight:900;
+      font-size:1.7rem; color:#fff; line-height:1;
+    }
+    .stat-label{
+      font-family:var(--mono); font-size:0.62rem;
+      color:var(--muted); letter-spacing:0.08em;
+      text-transform:uppercase; margin-top:3px;
+    }
+
+    .section-hd{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:18px; flex-wrap:wrap; gap:10px;
+    }
+    .section-hd h2{
+      font-family:'Sora',sans-serif; font-weight:700;
+      font-size:1.05rem; color:#fff; letter-spacing:-0.02em;
+    }
+    .section-hd p{ font-size:0.8rem; color:var(--muted); margin-top:2px; }
+
+    .save-btn{
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--cyan); color:var(--bg); border:none;
+      border-radius:50px; padding:10px 22px;
+      font-family:var(--body); font-weight:700; font-size:0.84rem;
+      cursor:pointer; text-decoration:none; transition:box-shadow .2s, transform .2s;
+    }
+    .save-btn:hover{ box-shadow:0 0 24px var(--cyan-glow); transform:translateY(-1px); }
+
+    .action-btn{
+      background:none; border:1px solid var(--border);
+      border-radius:7px; color:var(--muted); padding:7px 13px;
+      font-size:0.78rem; cursor:pointer;
+      transition:color .15s, border-color .15s; text-decoration:none;
+      display:inline-flex; align-items:center; gap:6px;
+      font-family:var(--body);
+    }
+    .action-btn:hover{ color:var(--cyan); border-color:var(--border-h); }
+    .action-btn.primary{ color:var(--cyan); border-color:var(--border-h); background:var(--cyan-dim); }
+
+    .info-card{
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:14px; overflow:hidden;
+    }
+
+    .quick-links{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+    .quick-link{
+      display:flex; flex-direction:column; align-items:center; gap:9px;
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:14px; padding:22px 14px;
+      text-decoration:none; color:var(--muted); font-size:0.82rem;
+      font-weight:500; text-align:center; cursor:pointer;
+      transition:border-color .2s, color .2s, transform .2s;
+    }
+    .quick-link:hover{ border-color:var(--border-h); color:var(--cyan); transform:translateY(-3px); }
+    .quick-link i{ font-size:1.5rem; color:var(--cyan); }
+
+    .editor-list{ display:flex; flex-direction:column; gap:14px; }
+    .editor-card{
+      background:var(--bg-card); border:1px solid var(--border);
+      border-radius:14px; padding:22px; position:relative;
+      transition:border-color .2s;
+    }
+    .editor-card:hover{ border-color:var(--border-h); }
+    .editor-card-hd{
+      display:flex; align-items:center; justify-content:space-between;
+      margin-bottom:16px; gap:12px;
+    }
+    .editor-card-badge{
+      font-family:var(--mono); font-size:0.65rem; color:var(--cyan);
+      border:1px solid var(--border-h); padding:3px 10px; border-radius:50px;
+    }
+
+    .empty-state{
+      text-align:center; padding:44px 20px; color:var(--muted);
+    }
+    .empty-state i{ font-size:1.8rem; color:var(--border-h); display:block; margin-bottom:10px; }
+
+    .sidebar-overlay{
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,0.7); z-index:199;
+    }
+
+    @media (max-width:900px){
+      .sidebar{ transform:translateX(-100%); }
+      .sidebar.open{ transform:translateX(0); }
+      .sidebar-overlay.show{ display:block; }
+      .admin-main{ margin-left:0; }
+      .sidebar-toggle{ display:flex; align-items:center; }
+      .admin-content{ padding:18px; }
+      .admin-topbar{ padding:0 18px; }
     }
   </style>
 </head>
@@ -194,16 +301,14 @@
       <button class="sidebar-link active" data-panel="dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</button>
       <button class="sidebar-link" data-panel="projects"><i class="bi bi-layers-fill"></i> Projects</button>
       <button class="sidebar-link" data-panel="services"><i class="bi bi-briefcase-fill"></i> Services</button>
-      <button class="sidebar-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Testimonials</button>
-      <button class="sidebar-link" data-panel="profile"><i class="bi bi-person-fill"></i> Profile &amp; Stats</button>
-      <button class="sidebar-link" data-panel="sitedata"><i class="bi bi-hdd-network-fill"></i> Site Data</button>
+      <button class="sidebar-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Messages</button>
 
       <div class="sidebar-section-label">Portfolio Pages</div>
-      <a class="sidebar-link" href="{% url 'core:home' %}" target="_blank"><i class="bi bi-house"></i> Home <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:about' %}" target="_blank"><i class="bi bi-info-circle"></i> About <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:services' %}" target="_blank"><i class="bi bi-gear"></i> Services <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:projects' %}" target="_blank"><i class="bi bi-code-square"></i> Projects <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:contact' %}" target="_blank"><i class="bi bi-envelope"></i> Contact <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.7rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:home' %}" target="_blank"><i class="bi bi-house"></i> Home <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:about' %}" target="_blank"><i class="bi bi-info-circle"></i> About <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:services' %}" target="_blank"><i class="bi bi-gear"></i> Services <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:projects' %}" target="_blank"><i class="bi bi-code-square"></i> Projects <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:contact' %}" target="_blank"><i class="bi bi-envelope"></i> Contact <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
     </nav>
 
     <div class="sidebar-footer">
@@ -221,126 +326,108 @@
   <main class="admin-main">
 
     <div class="admin-topbar">
-      <div style="display:flex;align-items:center;gap:12px;">
+      <div class="topbar-left">
         <button class="sidebar-toggle" id="sidebarToggle"><i class="bi bi-list"></i></button>
         <div class="topbar-title" id="topbarTitle">Dashboard <span>/ Overview</span></div>
       </div>
       <div class="topbar-actions">
         <a href="{% url 'core:home' %}" target="_blank" class="topbar-visit"><i class="bi bi-box-arrow-up-right"></i> View Site</a>
-        <button class="topbar-save" id="topbarSave"><i class="bi bi-cloud-arrow-up-fill"></i> <span class="label-full">Save Changes</span></button>
       </div>
     </div>
 
     <div class="admin-content">
 
+      <!-- DASHBOARD PANEL -->
       <div class="panel active" id="panel-dashboard">
-
-        <div class="data-banner" id="dataStatusBanner">
-          <i class="bi bi-info-circle-fill"></i>
-          <span id="dataStatusText">Loading content…</span>
-        </div>
-
-        <div class="stats-grid reveal">
-          <div class="stat-card"><div class="stat-icon"><i class="bi bi-layers-fill"></i></div><div><div class="stat-value" id="dashProjects">–</div><div class="stat-label">Projects</div></div></div>
-          <div class="stat-card"><div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div><div><div class="stat-value" id="dashServices">–</div><div class="stat-label">Services</div></div></div>
-          <div class="stat-card"><div class="stat-icon"><i class="bi bi-chat-quote-fill"></i></div><div><div class="stat-value" id="dashTestimonials">–</div><div class="stat-label">Testimonials</div></div></div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-icon"><i class="bi bi-layers-fill"></i></div><div><div class="stat-value">{{ db_projects.count }}</div><div class="stat-label">Projects</div></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div><div><div class="stat-value">{{ db_services.count }}</div><div class="stat-label">Services</div></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="bi bi-chat-quote-fill"></i></div><div><div class="stat-value">{{ contact_messages.count }}</div><div class="stat-label">Messages</div></div></div>
           <div class="stat-card"><div class="stat-icon"><i class="bi bi-shield-check-fill"></i></div><div><div class="stat-value">ON</div><div class="stat-label">Admin Session</div></div></div>
         </div>
 
-        <div class="section-hd reveal"><div><h2>Quick Actions</h2><p>Jump straight to editing any part of your portfolio</p></div></div>
-        <div class="quick-links reveal" style="margin-bottom:32px;">
+        <div class="section-hd"><div><h2>Quick Actions</h2><p>Jump straight to managing your live portfolio database</p></div></div>
+        <div class="quick-links">
           <div class="quick-link" data-panel="projects"><i class="bi bi-layers-fill"></i> Manage Projects</div>
           <div class="quick-link" data-panel="services"><i class="bi bi-briefcase-fill"></i> Manage Services</div>
-          <div class="quick-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Manage Testimonials</div>
-          <div class="quick-link" data-panel="profile"><i class="bi bi-person-badge-fill"></i> Update Profile</div>
-        </div>
-
-        <div class="section-hd reveal"><div><h2>How editing works here</h2><p>This is a static site — here's exactly what "Save" does</p></div></div>
-        <div class="info-card reveal" style="padding:24px;line-height:1.8;color:var(--muted);font-size:.9rem;">
-          <p style="margin-bottom:12px;"><i class="bi bi-1-circle-fill" style="color:var(--cyan);"></i>&nbsp; Edit any field in Projects, Services, Testimonials, or Profile.</p>
-          <p style="margin-bottom:12px;"><i class="bi bi-2-circle-fill" style="color:var(--cyan);"></i>&nbsp; Click <strong style="color:#fff;">Save Changes</strong> — your edits instantly show on the live pages, but only in <strong style="color:#fff;">this browser</strong> (stored locally as a preview).</p>
-          <p><i class="bi bi-3-circle-fill" style="color:var(--cyan);"></i>&nbsp; To publish for everyone, open <strong style="color:#fff;">Site Data</strong> and download the updated <code style="background:var(--bg);padding:2px 6px;border-radius:4px;color:var(--cyan);">content.json</code>, then replace the file in your repo and push — Vercel redeploys automatically.</p>
+          <div class="quick-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Contact Messages</div>
         </div>
       </div>
 
+      <!-- PROJECTS PANEL -->
       <div class="panel" id="panel-projects">
         <div class="section-hd">
-          <div><h2>Projects</h2><p>Manage the projects shown on your Home and Projects pages</p></div>
-          <button class="save-btn" id="addProjectBtn"><i class="bi bi-plus-lg"></i> Add Project</button>
+          <div><h2>Database Projects</h2><p>Real-time projects stored in your SQL database</p></div>
+          <a href="/admin/core/project/add/" target="_blank" class="save-btn"><i class="bi bi-plus-lg"></i> Add New Project</a>
         </div>
-        <div class="editor-list" id="projectsList"></div>
+        <div class="editor-list">
+          {% for proj in db_projects %}
+          <div class="editor-card">
+            <div class="editor-card-hd">
+              <span class="editor-card-badge">{% if proj.is_published %}🟢 Published{% else %}🟠 Draft{% endif %}</span>
+              <a href="/admin/core/project/{{ proj.id }}/change/" target="_blank" class="action-btn primary"><i class="bi bi-pencil-square"></i> Edit</a>
+            </div>
+            <div style="color:#fff; font-size:1.1rem; font-weight:700; margin-bottom:6px;">{{ proj.title }}</div>
+            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin-bottom:12px;">{{ proj.short_description|default:proj.description|truncatechars:160 }}</p>
+            <div style="font-family:var(--mono); font-size:0.72rem; color:var(--cyan);">Slug: {{ proj.slug }} | Order: {{ proj.display_order }}</div>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="bi bi-layers"></i>
+            <p>No projects found in the database.</p>
+            <a href="/admin/core/project/add/" target="_blank" class="save-btn" style="margin-top:12px;"><i class="bi bi-plus-lg"></i> Add First Project</a>
+          </div>
+          {% endfor %}
+        </div>
       </div>
 
+      <!-- SERVICES PANEL -->
       <div class="panel" id="panel-services">
         <div class="section-hd">
-          <div><h2>Services</h2><p>Manage the services shown on your Home and Services pages</p></div>
-          <button class="save-btn" id="addServiceBtn"><i class="bi bi-plus-lg"></i> Add Service</button>
+          <div><h2>Database Services</h2><p>Real-time services offered on your portfolio</p></div>
+          <a href="/admin/core/service/add/" target="_blank" class="save-btn"><i class="bi bi-plus-lg"></i> Add New Service</a>
         </div>
-        <div class="editor-list" id="servicesList"></div>
+        <div class="editor-list">
+          {% for srv in db_services %}
+          <div class="editor-card">
+            <div class="editor-card-hd">
+              <span class="editor-card-badge">{% if srv.is_published %}🟢 Published{% else %}🟠 Draft{% endif %}</span>
+              <a href="/admin/core/service/{{ srv.id }}/change/" target="_blank" class="action-btn primary"><i class="bi bi-pencil-square"></i> Edit</a>
+            </div>
+            <div style="color:#fff; font-size:1.1rem; font-weight:700; margin-bottom:6px;">{{ srv.title }}</div>
+            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin-bottom:12px;">{{ srv.description|truncatechars:160 }}</p>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="bi bi-briefcase"></i>
+            <p>No services found in the database.</p>
+            <a href="/admin/core/service/add/" target="_blank" class="save-btn" style="margin-top:12px;"><i class="bi bi-plus-lg"></i> Add Service</a>
+          </div>
+          {% endfor %}
+        </div>
       </div>
 
+      <!-- TESTIMONIALS / MESSAGES PANEL -->
       <div class="panel" id="panel-testimonials">
         <div class="section-hd">
-          <div><h2>Testimonials</h2><p>Client quotes shown on your Home and Projects pages</p></div>
-          <button class="save-btn" id="addTestimonialBtn"><i class="bi bi-plus-lg"></i> Add Testimonial</button>
+          <div><h2>Contact Messages</h2><p>Inquiries received from potential clients</p></div>
         </div>
-        <div class="editor-list" id="testimonialsList"></div>
-      </div>
-
-      <div class="panel" id="panel-profile">
-        <div class="section-hd"><div><h2>Profile Info</h2><p>Your personal details shown across the portfolio</p></div></div>
-
-        <div class="info-card reveal" style="padding:28px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;">Personal &amp; Contact</div>
-          <div class="field-grid">
-            <div class="field-block"><label>Full Name</label><input class="form-input" id="p-name" type="text"></div>
-            <div class="field-block"><label>Brand Name</label><input class="form-input" id="p-brand" type="text"></div>
-            <div class="field-block"><label>Location</label><input class="form-input" id="p-location" type="text"></div>
-            <div class="field-block"><label>Email</label><input class="form-input" id="p-email" type="email"></div>
-            <div class="field-block"><label>WhatsApp (display)</label><input class="form-input" id="p-whatsapp" type="text" placeholder="+254 700 000 000"></div>
-            <div class="field-block"><label>WhatsApp Link</label><input class="form-input" id="p-whatsappLink" type="text" placeholder="https://wa.me/254700000000"></div>
-            <div class="field-block"><label>GitHub URL</label><input class="form-input" id="p-github" type="text"></div>
-            <div class="field-block"><label>LinkedIn URL</label><input class="form-input" id="p-linkedin" type="text"></div>
+        <div class="editor-list">
+          {% for msg in contact_messages %}
+          <div class="editor-card">
+            <div class="editor-card-hd">
+              <span class="editor-card-badge">{{ msg.service_needed|default:"General Inquiry" }}</span>
+              <span style="font-family:var(--mono); font-size:0.7rem; color:var(--muted);">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+            </div>
+            <div style="color:#fff; font-size:1rem; font-weight:700; margin-bottom:4px;">{{ msg.first_name }} {{ msg.last_name }} <span style="font-size:0.8rem; color:var(--cyan); font-weight:400;">({{ msg.email }})</span></div>
+            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6;">{{ msg.project_brief }}</p>
           </div>
-        </div>
-
-        <div class="info-card reveal" style="padding:28px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:20px;">Hero Stats</div>
-          <div class="field-grid">
-            <div class="field-block"><label>Years Building</label><input class="form-input" id="s-years" type="number" min="0"></div>
-            <div class="field-block"><label>Remote Ready (%)</label><input class="form-input" id="s-remote" type="number" min="0" max="100"></div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="bi bi-chat-quote"></i>
+            <p>No contact messages received yet.</p>
           </div>
-          <p style="color:var(--muted);font-size:.8rem;margin-top:4px;">"Projects Shipped" is calculated automatically from your Projects list.</p>
-        </div>
-
-      </div>
-
-      <div class="panel" id="panel-sitedata">
-        <div class="section-hd"><div><h2>Site Data</h2><p>Publish your changes, or back up / restore your content</p></div></div>
-
-        <div class="info-card reveal" style="padding:28px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;">Publish Live</div>
-          <p style="color:var(--muted);font-size:.9rem;line-height:1.75;margin-bottom:20px;">
-            Download the current content as <code style="background:var(--bg);padding:2px 6px;border-radius:4px;font-family:var(--mono);font-size:.82rem;color:var(--cyan);">content.json</code>, replace the file in your project, and push — this makes your edits visible to every visitor, not just this browser.
-          </p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="save-btn" id="downloadJsonBtn"><i class="bi bi-download"></i> Download content.json</button>
-            <button class="action-btn" id="resetPreviewBtn"><i class="bi bi-arrow-counterclockwise"></i> Discard Local Preview</button>
-          </div>
-        </div>
-
-        <div class="info-card reveal" style="padding:28px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;">Import content.json</div>
-          <div class="file-drop">
-            <i class="bi bi-upload" style="font-size:1.4rem;color:var(--cyan);display:block;margin-bottom:8px;"></i>
-            Load an existing content.json to continue editing it here
-            <div style="margin-top:14px;"><input type="file" id="importFile" accept="application/json"></div>
-          </div>
-        </div>
-
-        <div class="info-card reveal" style="padding:28px;">
-          <div style="font-family:var(--mono);font-size:.65rem;color:var(--cyan);letter-spacing:.1em;text-transform:uppercase;margin-bottom:16px;">Raw JSON Preview</div>
-          <textarea class="json-preview" id="jsonPreview" readonly></textarea>
+          {% endfor %}
         </div>
       </div>
 
@@ -348,371 +435,32 @@
   </main>
 </div>
 
-<div class="toast" id="toast"><i class="bi bi-check-circle-fill"></i><span id="toastMsg">Done!</span></div>
-
 <script>
-  const CMS_OVERRIDE_KEY = 'eddyforge_content_override';
-  let siteData = null;
-  let dataSource = 'loading';
-
-  async function loadData() {
-    const override = localStorage.getItem(CMS_OVERRIDE_KEY);
-    if (override) {
-      try {
-        siteData = JSON.parse(override);
-        dataSource = 'preview';
-        renderAll();
-        return;
-      } catch (e) { /* fall through to fetch */ }
-    }
-    try {
-      const res = await fetch("{% static 'core/content.json' %}", { cache: 'no-store' });
-      siteData = await res.json();
-      dataSource = 'published';
-    } catch (e) {
-      siteData = { profile:{}, stats:{yearsBuilding:0,remotePercent:100}, services:[], projects:[], testimonials:[] };
-      dataSource = 'error';
-    }
-    renderAll();
-  }
-
-  function updateDataBanner() {
-    const banner = document.getElementById('dataStatusBanner');
-    const text = document.getElementById('dataStatusText');
-    if (dataSource === 'preview') {
-      banner.className = 'data-banner warn';
-      text.innerHTML = "<strong>Unsaved local preview active</strong> — you are viewing edited content saved to this browser only. Head to Site Data to publish it live.";
-    } else if (dataSource === 'error') {
-      banner.className = 'data-banner warn';
-      text.textContent = 'Could not load content.json — starting from a blank template.';
-    } else {
-      banner.className = 'data-banner';
-      text.textContent = 'Showing the currently published content.json.';
-    }
-  }
-
-  function renderAll() {
-    updateDataBanner();
-    renderDashboard();
-    renderProjects();
-    renderServices();
-    renderTestimonials();
-    renderProfile();
-    renderJsonPreview();
-    document.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
-  }
-
-  function renderDashboard() {
-    document.getElementById('dashProjects').textContent = (siteData.projects || []).length;
-    document.getElementById('dashServices').textContent = (siteData.services || []).length;
-    document.getElementById('dashTestimonials').textContent = (siteData.testimonials || []).length;
-  }
-
-  function renderJsonPreview() {
-    document.getElementById('jsonPreview').value = JSON.stringify(siteData, null, 2);
-  }
-
-  function renderProjects() {
-    const list = document.getElementById('projectsList');
-    const items = siteData.projects || [];
-    if (!items.length) {
-      list.innerHTML = '<div class="empty-state"><i class="bi bi-layers"></i>No projects yet. Click "Add Project" to create one.</div>';
-      return;
-    }
-    list.innerHTML = items.map((p, i) => `
-      <div class="editor-card" data-idx="${i}">
-        <div class="editor-card-hd">
-          <span class="editor-card-badge">Project ${i + 1}</span>
-          <button class="action-btn danger" data-action="remove-project" data-idx="${i}"><i class="bi bi-trash3"></i> Remove</button>
-        </div>
-        <div class="field-grid">
-          <div class="field-block"><label>Title</label><input class="form-input" data-arr="projects" data-idx="${i}" data-field="title" value="${esc(p.title)}"></div>
-          <div class="field-block"><label>Short Title (teaser card)</label><input class="form-input" data-arr="projects" data-idx="${i}" data-field="shortTitle" value="${esc(p.shortTitle)}"></div>
-          <div class="field-block"><label>Badge Text</label><input class="form-input" data-arr="projects" data-idx="${i}" data-field="badge" value="${esc(p.badge)}"></div>
-          <div class="field-block"><label>Badge Icon (Bootstrap Icons class)</label><input class="form-input" data-arr="projects" data-idx="${i}" data-field="badgeIcon" value="${esc(p.badgeIcon)}"></div>
-        </div>
-        <div class="field-grid full">
-          <div class="field-block"><label>Full Description</label><textarea class="form-input" data-arr="projects" data-idx="${i}" data-field="description">${esc(p.description)}</textarea></div>
-        </div>
-        <div class="field-grid full">
-          <div class="field-block"><label>Short Description (teaser card)</label><textarea class="form-input" data-arr="projects" data-idx="${i}" data-field="shortDescription">${esc(p.shortDescription)}</textarea></div>
-        </div>
-        <div class="field-grid full">
-          <div class="field-block"><label>Highlights (one per line)</label><textarea class="form-input" data-arr="projects" data-idx="${i}" data-field="highlights" data-list="true">${esc((p.highlights||[]).join('\n'))}</textarea></div>
-        </div>
-        <div class="field-grid">
-          <div class="field-block"><label>Repository URL</label><input class="form-input" data-arr="projects" data-idx="${i}" data-field="repo" value="${esc(p.repo)}"></div>
-          <div class="field-block">
-            <label>Card Icon</label>
-            <div class="icon-input-row">
-              <span class="icon-live"><i class="bi ${esc(p.icon)}"></i></span>
-              <input class="form-input" data-arr="projects" data-idx="${i}" data-field="icon" value="${esc(p.icon)}">
-            </div>
-          </div>
-          <div class="field-block"><label>Icon Label</label><input class="form-input" data-arr="projects" data-idx="${i}" data-field="iconLabel" value="${esc(p.iconLabel)}"></div>
-          <div class="field-block">
-            <label>Accent Color</label>
-            <div class="accent-row">
-              <div class="accent-swatch ${p.accent==='0,214,255'?'selected':''}" style="background:rgb(0,214,255)" data-action="set-accent" data-idx="${i}" data-accent="0,214,255"></div>
-              <div class="accent-swatch ${p.accent==='255,179,0'?'selected':''}" style="background:rgb(255,179,0)" data-action="set-accent" data-idx="${i}" data-accent="255,179,0"></div>
-              <input class="form-input" style="flex:1;" data-arr="projects" data-idx="${i}" data-field="accent" value="${esc(p.accent)}" placeholder="R,G,B">
-            </div>
-          </div>
-        </div>
-        <label class="checkbox-row"><input type="checkbox" data-arr="projects" data-idx="${i}" data-field="imageFirst" data-checkbox="true" ${p.imageFirst ? 'checked' : ''}> Show visual panel on the left</label>
-      </div>
-    `).join('');
-  }
-
-  document.getElementById('addProjectBtn').addEventListener('click', () => {
-    siteData.projects.push({
-      title: 'New Project', shortTitle: 'New Project', badge: 'Full Stack', badgeIcon: 'bi-stack',
-      description: 'Describe the project in detail here.', shortDescription: 'Short one-line summary.',
-      highlights: ['Key feature one', 'Key feature two'], repo: 'https://github.com/edujoew',
-      icon: 'bi-code-square', iconLabel: 'New Project', accent: '0,214,255', imageFirst: false
-    });
-    renderProjects(); renderDashboard(); renderJsonPreview(); markDirty();
-    document.querySelector('#projectsList .editor-card:last-child').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function renderServices() {
-    const list = document.getElementById('servicesList');
-    const items = siteData.services || [];
-    if (!items.length) {
-      list.innerHTML = '<div class="empty-state"><i class="bi bi-briefcase"></i>No services yet. Click "Add Service" to create one.</div>';
-      return;
-    }
-    list.innerHTML = items.map((s, i) => `
-      <div class="editor-card" data-idx="${i}">
-        <div class="editor-card-hd">
-          <span class="editor-card-badge">Service ${i + 1}</span>
-          <button class="action-btn danger" data-action="remove-service" data-idx="${i}"><i class="bi bi-trash3"></i> Remove</button>
-        </div>
-        <div class="field-grid">
-          <div class="field-block"><label>Title</label><input class="form-input" data-arr="services" data-idx="${i}" data-field="title" value="${esc(s.title)}"></div>
-          <div class="field-block">
-            <label>Icon (Bootstrap Icons class)</label>
-            <div class="icon-input-row">
-              <span class="icon-live"><i class="bi ${esc(s.icon)}"></i></span>
-              <input class="form-input" data-arr="services" data-idx="${i}" data-field="icon" value="${esc(s.icon)}">
-            </div>
-          </div>
-        </div>
-        <div class="field-grid full">
-          <div class="field-block"><label>Short Description (home preview)</label><textarea class="form-input" data-arr="services" data-idx="${i}" data-field="description">${esc(s.description)}</textarea></div>
-        </div>
-        <div class="field-grid full">
-          <div class="field-block"><label>Long Description (services page)</label><textarea class="form-input" data-arr="services" data-idx="${i}" data-field="longDescription">${esc(s.longDescription)}</textarea></div>
-        </div>
-        <div class="field-grid">
-          <div class="field-block"><label>Tech Summary</label><input class="form-input" data-arr="services" data-idx="${i}" data-field="tech" value="${esc(s.tech)}"></div>
-          <div class="field-block"><label>Tags (comma separated)</label><input class="form-input" data-arr="services" data-idx="${i}" data-field="tags" data-list="comma" value="${esc((s.tags||[]).join(', '))}"></div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  document.getElementById('addServiceBtn').addEventListener('click', () => {
-    siteData.services.push({
-      icon: 'bi-gear-fill', title: 'New Service', description: 'Short description shown on the homepage.',
-      longDescription: 'Longer description shown on the services page.', tech: 'Tech · Stack · Here', tags: ['Tag1', 'Tag2']
-    });
-    renderServices(); renderDashboard(); renderJsonPreview(); markDirty();
-    document.querySelector('#servicesList .editor-card:last-child').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function renderTestimonials() {
-    const list = document.getElementById('testimonialsList');
-    const items = siteData.testimonials || [];
-    if (!items.length) {
-      list.innerHTML = '<div class="empty-state"><i class="bi bi-chat-quote"></i>No testimonials yet. Click "Add Testimonial" to create one.</div>';
-      return;
-    }
-    list.innerHTML = items.map((t, i) => `
-      <div class="editor-card" data-idx="${i}">
-        <div class="editor-card-hd">
-          <span class="editor-card-badge">Testimonial ${i + 1}</span>
-          <button class="action-btn danger" data-action="remove-testimonial" data-idx="${i}"><i class="bi bi-trash3"></i> Remove</button>
-        </div>
-        <div class="field-grid full">
-          <div class="field-block"><label>Quote</label><textarea class="form-input" data-arr="testimonials" data-idx="${i}" data-field="quote">${esc(t.quote)}</textarea></div>
-        </div>
-        <div class="field-grid" style="grid-template-columns:80px 1fr 1fr;">
-          <div class="field-block"><label>Initials</label><input class="form-input" data-arr="testimonials" data-idx="${i}" data-field="initials" value="${esc(t.initials)}" maxlength="2"></div>
-          <div class="field-block"><label>Name</label><input class="form-input" data-arr="testimonials" data-idx="${i}" data-field="name" value="${esc(t.name)}"></div>
-          <div class="field-block"><label>Role</label><input class="form-input" data-arr="testimonials" data-idx="${i}" data-field="role" value="${esc(t.role)}"></div>
-        </div>
-      </div>
-    `).join('');
-  }
-
-  document.getElementById('addTestimonialBtn').addEventListener('click', () => {
-    siteData.testimonials.push({ quote: 'What the client said about working with you.', initials: 'XY', name: 'Client Name', role: 'Their Role' });
-    renderTestimonials(); renderDashboard(); renderJsonPreview(); markDirty();
-    document.querySelector('#testimonialsList .editor-card:last-child').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  });
-
-  function renderProfile() {
-    const p = siteData.profile || {};
-    const s = siteData.stats || {};
-    document.getElementById('p-name').value = p.name || '';
-    document.getElementById('p-brand').value = p.brand || '';
-    document.getElementById('p-location').value = p.location || '';
-    document.getElementById('p-email').value = p.email || '';
-    document.getElementById('p-whatsapp').value = p.whatsapp || '';
-    document.getElementById('p-whatsappLink').value = p.whatsappLink || '';
-    document.getElementById('p-github').value = p.github || '';
-    document.getElementById('p-linkedin').value = p.linkedin || '';
-    document.getElementById('s-years').value = s.yearsBuilding ?? '';
-    document.getElementById('s-remote').value = s.remotePercent ?? '';
-  }
-
-  ['p-name','p-brand','p-location','p-email','p-whatsapp','p-whatsappLink','p-github','p-linkedin'].forEach(id => {
-    const key = id.slice(2);
-    document.getElementById(id).addEventListener('input', (e) => {
-      siteData.profile[key] = e.target.value;
-      renderJsonPreview(); markDirty();
+  // Simple tab switching for sidebar panels
+  document.querySelectorAll('.sidebar-link, .quick-link').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      const panelId = btn.getAttribute('data-panel');
+      if (!panelId) return;
+      document.querySelectorAll('.sidebar-link').forEach(l => l.classList.remove('active'));
+      const activeLink = document.querySelector(`.sidebar-link[data-panel="${panelId}"]`);
+      if (activeLink) activeLink.classList.add('active');
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`panel-${panelId}`).classList.add('active');
+      const titles = { dashboard: 'Dashboard / Overview', projects: 'Content / Projects', services: 'Content / Services', testimonials: 'Content / Messages' };
+      document.getElementById('topbarTitle').innerHTML = (titles[panelId] || 'Admin').split('/')[0] + `<span>/ ${(titles[panelId] || '').split('/')[1] || ''}</span>`;
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('show');
     });
   });
-  document.getElementById('s-years').addEventListener('input', (e) => { siteData.stats.yearsBuilding = Number(e.target.value) || 0; renderJsonPreview(); markDirty(); });
-  document.getElementById('s-remote').addEventListener('input', (e) => { siteData.stats.remotePercent = Number(e.target.value) || 0; renderJsonPreview(); markDirty(); });
 
-  document.getElementById('panel-projects').addEventListener('input', handleArrInput);
-  document.getElementById('panel-services').addEventListener('input', handleArrInput);
-  document.getElementById('panel-testimonials').addEventListener('input', handleArrInput);
-
-  function handleArrInput(e) {
-    const t = e.target;
-    const arr = t.getAttribute('data-arr');
-    if (!arr) return;
-    const idx = Number(t.getAttribute('data-idx'));
-    const field = t.getAttribute('data-field');
-    let val;
-    if (t.getAttribute('data-checkbox') === 'true') {
-      val = t.checked;
-    } else if (t.getAttribute('data-list') === 'true') {
-      val = t.value.split('\n').map(s => s.trim()).filter(Boolean);
-    } else if (t.getAttribute('data-list') === 'comma') {
-      val = t.value.split(',').map(s => s.trim()).filter(Boolean);
-    } else {
-      val = t.value;
-    }
-    siteData[arr][idx][field] = val;
-    if (field === 'icon') {
-      const preview = t.closest('.icon-input-row')?.querySelector('.icon-live i');
-      if (preview) preview.className = 'bi ' + val;
-    }
-    renderJsonPreview();
-    markDirty();
-  }
-
-  document.addEventListener('click', (e) => {
-    const btn = e.target.closest('[data-action]');
-    if (!btn) return;
-    const action = btn.getAttribute('data-action');
-    const idx = Number(btn.getAttribute('data-idx'));
-
-    if (action === 'remove-project') { if (confirm('Remove this project?')) { siteData.projects.splice(idx,1); renderProjects(); renderDashboard(); renderJsonPreview(); markDirty(); } }
-    if (action === 'remove-service') { if (confirm('Remove this service?')) { siteData.services.splice(idx,1); renderServices(); renderDashboard(); renderJsonPreview(); markDirty(); } }
-    if (action === 'remove-testimonial') { if (confirm('Remove this testimonial?')) { siteData.testimonials.splice(idx,1); renderTestimonials(); renderDashboard(); renderJsonPreview(); markDirty(); } }
-    if (action === 'set-accent') { siteData.projects[idx].accent = btn.getAttribute('data-accent'); renderProjects(); renderJsonPreview(); markDirty(); }
+  document.getElementById('sidebarToggle').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
   });
-
-  function esc(str) {
-    return String(str ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  let dirty = false;
-  function markDirty() {
-    dirty = true;
-    document.getElementById('topbarSave').classList.add('dirty');
-  }
-  document.getElementById('topbarSave').addEventListener('click', () => {
-    localStorage.setItem(CMS_OVERRIDE_KEY, JSON.stringify(siteData));
-    dataSource = 'preview';
-    dirty = false;
-    document.getElementById('topbarSave').classList.remove('dirty');
-    updateDataBanner();
-    showToast('Saved! Live preview updated in this browser.');
+  document.getElementById('sidebarOverlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
   });
-
-  document.getElementById('downloadJsonBtn').addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(siteData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = 'content.json';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('content.json downloaded — replace it in your project & push to publish');
-  });
-
-  document.getElementById('resetPreviewBtn').addEventListener('click', async () => {
-    if (!confirm('Discard your local preview and reload the published content.json?')) return;
-    localStorage.removeItem(CMS_OVERRIDE_KEY);
-    dataSource = 'published';
-    dirty = false;
-    document.getElementById('topbarSave').classList.remove('dirty');
-    await loadData();
-    showToast('Reverted to published content.json');
-  });
-
-  document.getElementById('importFile').addEventListener('change', (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      try {
-        siteData = JSON.parse(reader.result);
-        dataSource = 'preview';
-        renderAll();
-        markDirty();
-        showToast('Imported — click Save Changes to apply as your preview');
-      } catch (err) {
-        showToast('That file is not valid JSON');
-      }
-    };
-    reader.readAsText(file);
-  });
-
-  const panelTitles = {
-    dashboard: { title: 'Dashboard', sub: '/ Overview' },
-    projects:  { title: 'Projects',  sub: '/ Manage' },
-    services:  { title: 'Services',  sub: '/ Manage' },
-    testimonials: { title: 'Testimonials', sub: '/ Manage' },
-    profile:   { title: 'Profile',   sub: '/ Settings' },
-    sitedata:  { title: 'Site Data', sub: '/ Publish & Backup' },
-  };
-
-  function switchPanel(name) {
-    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-    document.querySelectorAll('.sidebar-link[data-panel]').forEach(l => l.classList.remove('active'));
-    const panel = document.getElementById('panel-' + name);
-    if (panel) panel.classList.add('active');
-    document.querySelectorAll(`[data-panel="${name}"]`).forEach(el => el.classList.add('active'));
-    const info = panelTitles[name] || { title: name, sub: '' };
-    document.getElementById('topbarTitle').innerHTML = `${info.title} <span>${info.sub}</span>`;
-    closeSidebar();
-  }
-  document.querySelectorAll('[data-panel]').forEach(el => el.addEventListener('click', () => switchPanel(el.dataset.panel)));
-
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  document.getElementById('sidebarToggle').addEventListener('click', () => { sidebar.classList.toggle('open'); overlay.classList.toggle('show'); });
-  function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
-  overlay.addEventListener('click', closeSidebar);
-
-  function showToast(msg) {
-    const toast = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    toast.classList.add('show');
-    setTimeout(() => toast.classList.remove('show'), 3200);
-  }
-
-  window.addEventListener('beforeunload', (e) => {
-    if (dirty) { e.preventDefault(); e.returnValue = ''; }
-  });
-
-  loadData();
 </script>
 </body>
 </html>

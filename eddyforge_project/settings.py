@@ -1,10 +1,18 @@
 import os
 from pathlib import Path
 
-
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-DEBUG = os.environ.get("DJANGO_DEBUG", "False").lower() == "true"
+# Automatically load local .env file if it exists (great for local dev in VS Code)
+try:
+    import dotenv
+    dotenv.load_dotenv(BASE_DIR / '.env')
+except ImportError:
+    pass
+
+# Default to True locally so it never crashes if .env is missing or unread
+DEBUG = os.environ.get("DJANGO_DEBUG", "True").lower() == "true"
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
 if not SECRET_KEY:
     if not DEBUG:
@@ -13,15 +21,15 @@ if not SECRET_KEY:
 
     SECRET_KEY = get_random_secret_key()
 
-ALLOWED_HOSTS = [".vercel.app"]
+ALLOWED_HOSTS = [".vercel.app", "localhost", "127.0.0.1"]
 ALLOWED_HOSTS.extend(
     host.strip()
-    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
+    for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
     if host.strip()
 )
 CSRF_TRUSTED_ORIGINS = [
     origin.strip()
-    for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+    for origin in os.environ.get("DJANGO_CSRF_TRUSTED_ORIGINS", "http://127.0.0.1:8000,http://localhost:8000").split(",")
     if origin.strip()
 ]
 SITE_URL = os.environ.get("SITE_URL", "").rstrip("/")

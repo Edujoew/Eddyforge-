@@ -14,6 +14,7 @@ urlpatterns = [
     path("about/", views.about, name="about"),
     path("contact/", views.contact, name="contact"),
     path("admin-panel/", views.admin_page, name="admin"),
+    path('admin-panel/', views.admin_page, name='admin_page'),
     path("login/", views.login, name="login"),
     path(
         "portal/login/",

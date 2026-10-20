@@ -5,9 +5,9 @@ from pathlib import PurePosixPath
 from urllib.parse import urlsplit
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -110,7 +110,31 @@ def contact(request):
 
 @staff_member_required
 def admin_page(request):
-    return render(request, "core/admin.html")
+    # Fetch real database records
+    db_projects = Project.objects.all().order_by("display_order", "-id")
+    db_services = Service.objects.all().order_by("display_order", "-id")
+    contact_messages = ContactMessage.objects.order_by("-created_at")
+    client_projects = ClientProject.objects.prefetch_related("milestones").all()
+    lab_experiments = LabExperiment.objects.order_by("display_order", "-id")
+    recent_posts = Post.objects.order_by("-published_at", "-id")
+
+    return render(
+        request,
+        "core/admin.html",
+        {
+            **page_context(
+                request,
+                "Admin Management | Eddyforge",
+                "Custom administration portal for Eddyforge.",
+            ),
+            "db_projects": db_projects,
+            "db_services": db_services,
+            "contact_messages": contact_messages,
+            "projects": client_projects,
+            "lab_experiments": lab_experiments,
+            "recent_posts": recent_posts,
+        },
+    )
 
 
 def login(request):
@@ -119,7 +143,19 @@ def login(request):
 
 @login_required
 def portal_dashboard(request):
-    projects = request.user.client_projects.prefetch_related("milestones")
+    if request.user.is_staff:
+        client_projects = ClientProject.objects.prefetch_related("milestones").all()
+        contact_messages = ContactMessage.objects.order_by("-created_at")[:10]
+        recent_posts = Post.objects.order_by("-created_at")[:10]
+        lab_experiments = LabExperiment.objects.order_by("-created_at")
+        services_list = Service.objects.all()
+    else:
+        client_projects = request.user.client_projects.prefetch_related("milestones")
+        contact_messages = []
+        recent_posts = []
+        lab_experiments = []
+        services_list = []
+
     return render(
         request,
         "core/portal/dashboard.html",
@@ -129,7 +165,11 @@ def portal_dashboard(request):
                 "Client Portal | Eddyforge",
                 "Review your Eddyforge project status, milestones, and shared resources.",
             ),
-            "projects": projects,
+            "projects": client_projects,
+            "contact_messages": contact_messages,
+            "recent_posts": recent_posts,
+            "lab_experiments": lab_experiments,
+            "services_list": services_list,
         },
     )
 
@@ -161,7 +201,7 @@ def portal_project_detail(request, slug):
 
 def projects(request):
     published_projects = list(
-        Project.objects.filter(is_published=True).prefetch_related("images")
+        Project.objects.filter(is_published=True).order_by("display_order", "-id")
     )
     return render(
         request,
@@ -173,7 +213,6 @@ def projects(request):
                 "Explore software projects by Eddyforge, including resource booking and property management systems.",
             ),
             "published_projects": published_projects,
-            "server_projects": bool(published_projects),
         },
     )
 
@@ -291,56 +330,56 @@ def resume(request):
         "skills": [
             {
                 "group": "Backend & APIs",
-                "items": ["Python", "Django", "Django REST Framework", "PostgreSQL", "SQLite", "M-Pesa API"]
+                "items": ["Python", "Django", "Django REST Framework", "PostgreSQL", "SQLite", "M-Pesa API"],
             },
             {
                 "group": "Frontend & UI/UX",
-                "items": ["HTML5", "CSS3", "JavaScript (ES6+)", "Bootstrap", "Responsive Layouts"]
+                "items": ["HTML5", "CSS3", "JavaScript (ES6+)", "Bootstrap", "Responsive Layouts"],
             },
             {
                 "group": "DevOps & Tools",
-                "items": ["Git & GitHub", "Visual Studio Code", "PyCharm", "Vercel", "WhiteNoise"]
-            }
+                "items": ["Git & GitHub", "Visual Studio Code", "PyCharm", "Vercel", "WhiteNoise"],
+            },
         ],
         "projects": [
             {
                 "title": "University Resource and Equipment Booking System (URBS)",
                 "summary": "Full-stack academic resource booking web application with secure authentication, database management, and automated payment workflows via M-Pesa API.",
                 "stack": ["Django", "PostgreSQL", "Bootstrap", "M-Pesa API"],
-                "repository": "https://github.com"
+                "repository": "https://github.com",
             },
             {
                 "title": "Eddyforge Development Platform",
                 "summary": "Production-ready developer portfolio and client acquisition platform featuring contact inquiry persistence and dynamic rendering.",
                 "stack": ["Python", "Django", "Vercel", "JavaScript"],
-                "repository": "https://github.com"
-            }
+                "repository": "https://github.com",
+            },
         ],
         "experience": [
             {
                 "title": "Full-Stack Web Developer — Eddyforge / Eddytech (2024 – Present)",
-                "description": "Architected full-stack web solutions, built RESTful backend services with Django, managed database schemas, and delivered responsive production websites."
+                "description": "Architected full-stack web solutions, built RESTful backend services with Django, managed database schemas, and delivered responsive production websites.",
             }
         ],
         "education": [
             {
                 "name": "Bachelor of Education (Arts)",
-                "description": "University of Kabianga — Specialization in English, Literature, and Educational Frameworks with active institutional leadership."
+                "description": "University of Kabianga — Specialization in English, Literature, and Educational Frameworks with active institutional leadership.",
             }
         ],
         "certifications": [],
         "links": [
             {"label": "Email: eddychannels254@gmail.com", "url": "mailto:eddychannels254@gmail.com"},
-            {"label": "GitHub", "url": "https://github.com"}
-        ]
+            {"label": "GitHub", "url": "https://github.com"},
+        ],
     }
 
     resume_projects = Project.objects.filter(is_published=True)
-    
-    resume_pdf_setting = getattr(settings, 'RESUME_PDF', None)
+
+    resume_pdf_setting = getattr(settings, "RESUME_PDF", None)
     has_resume_pdf = False
     resume_pdf_path = ""
-    
+
     if resume_pdf_setting:
         resume_root = (settings.BASE_DIR / "core" / "static" / "core").resolve()
         resume_file = (resume_root / resume_pdf_setting).resolve()
@@ -366,6 +405,7 @@ def resume(request):
             "has_resume_pdf": has_resume_pdf,
         },
     )
+
 
 def privacy(request):
     return render(
