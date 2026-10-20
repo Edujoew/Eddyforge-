@@ -1,14 +1,36 @@
 {% extends "core/base.html" %}
+{% load static %}
+
+{% block title %}Now — Eddyforge{% endblock %}
+
 {% block content %}
 <div class="page-wrap">
-  <header class="page-hero"><div class="page-hero-inner"><p class="page-hero-eyebrow">Current notes</p><h1 class="page-hero-title">What I'm <span>doing now</span></h1><p class="page-hero-sub">A short, occasional update on current work.</p></div></header>
-  <section><div class="container-c now-content">
-    {% if now_update %}
-    <p class="writing-date">Last updated {{ now_update.updated_at|date:"F j, Y" }}</p>
-    <div class="markdown-content">{{ rendered_update }}</div>
-    {% else %}
-    <p class="empty-state">There is no published update yet.</p>
-    {% endif %}
-  </div></section>
+  <div class="page-hero">
+    <div class="page-hero-inner">
+      <div class="page-hero-eyebrow">Current Notes</div>
+      <h1 class="page-hero-title">What I'm <span style="color:var(--cyan);">doing</span> <span style="color:var(--gold);">now</span></h1>
+      <p class="page-hero-sub">A short, occasional update on current work and active focus.</p>
+    </div>
+  </div>
+
+  <section style="background:var(--bg); padding: 60px 0;">
+    <div class="container-c" style="max-width: 800px;">
+      {% if current_update %}
+      <article class="tech-card reveal" style="background:var(--bg-card); border:1px solid var(--border); border-radius:16px; padding:36px;">
+        <div style="font-family:var(--mono); font-size:0.75rem; color:var(--cyan); margin-bottom:12px;">
+          Updated: {{ current_update.updated_at|date:"F d, Y" }}
+        </div>
+        <div style="color:var(--text); font-size:1rem; line-height:1.8;">
+          {{ current_update.body|linebreaks }}
+        </div>
+      </article>
+      {% else %}
+      <div style="text-align: center; padding: 60px 20px; color: var(--muted);">
+        <i class="bi bi-clock-history" style="font-size: 2.5rem; display: block; margin-bottom: 12px; color: var(--border-h);"></i>
+        <p style="font-size: 1rem;">There is no published update yet. Create one in your Admin Panel.</p>
+      </div>
+      {% endif %}
+    </div>
+  </section>
 </div>
 {% endblock %}

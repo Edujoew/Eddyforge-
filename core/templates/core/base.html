@@ -29,6 +29,7 @@
       --bg-surface:#111620;
       --bg-raised:#181e2a;
       --border:#1e2a3a;
+      --border-h:#2a3550;
       --cyan:#38bdf8;
       --cyan-dim:rgba(56,189,248,0.12);
       --text:#e2e8f0;
@@ -85,6 +86,86 @@
       color:#fff;
     }
     .hire-btn i{ font-size:1rem; }
+
+    /* ===== FLOATING SIDE QUICK MENU ===== */
+    .side-quick-menu {
+      position: fixed;
+      right: 1.6rem;
+      bottom: 5rem;
+      z-index: 199;
+    }
+    .side-menu-toggle {
+      width: 46px;
+      height: 46px;
+      border-radius: 50%;
+      background: var(--cyan);
+      border: none;
+      color: var(--bg);
+      font-size: 1.25rem;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(56,189,248,0.4);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .side-menu-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(56,189,248,0.6);
+    }
+    .side-menu-toggle:hover {
+      transform: scale(1.08);
+      border-color: var(--cyan);
+    }
+    .side-menu-dropdown {
+      position: absolute;
+      right: 0;
+      bottom: 50px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-h);
+      border-radius: 12px;
+      width: 170px;
+      padding: 6px 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+      display: none;
+      flex-direction: column;
+      animation: menuPop .2s ease both;
+    }
+    .side-menu-dropdown.show {
+      display: flex;
+    }
+    @keyframes menuPop {
+      from { opacity: 0; transform: translateY(6px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .side-menu-header {
+      font-family: 'Sora', sans-serif;
+      font-size: 0.58rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      padding: 6px 12px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 2px;
+    }
+    .side-menu-dropdown a {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 7px 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: background .15s, color .15s;
+    }
+    .side-menu-dropdown a:hover {
+      background: var(--cyan-dim);
+      color: var(--cyan);
+    }
+    .side-menu-dropdown a i {
+      font-size: 0.85rem;
+      color: var(--cyan);
+    }
 
     /* ===== NAVBAR ===== */
     .nav-wrap{
@@ -183,35 +264,23 @@
       .nav-links li a.nav-cta{ margin-left:0; margin-top:0.5rem; display:inline-block; width:auto; }
     }
 
-    /* ===== FOOTER ===== */
+    /* ===== FOOTER (Cleaned up) ===== */
     footer{
       border-top:1px solid var(--border);
-      padding:2.8rem 2rem 2rem;
+      padding:2.2rem 2rem;
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:1.4rem;
+      gap:0.8rem;
       text-align:center;
     }
 
     .footer-brand{
       font-family:'Sora', sans-serif;
-      font-weight:900; font-size:1.4rem;
+      font-weight:900; font-size:1.2rem;
       color:var(--text); letter-spacing:-0.3px;
     }
     .footer-brand span{ color:var(--cyan); }
-
-    .footer-links{
-      display:flex; flex-wrap:wrap;
-      justify-content:center; gap:0.2rem;
-    }
-    .footer-links a{
-      color:var(--muted); text-decoration:none;
-      font-size:0.82rem; font-weight:500;
-      padding:0.3rem 0.65rem; border-radius:6px;
-      transition:color .15s ease, background .15s ease;
-    }
-    .footer-links a:hover{ color:var(--text); background:var(--bg-raised); }
 
     .footer-copy{
       font-size:0.75rem; color:var(--muted);
@@ -223,6 +292,22 @@
 <body>
   <a class="skip-link" href="#main-content">Skip to content</a>
   <a href="https://wa.me/254703817789" class="hire-btn"><i class="bi bi-whatsapp" aria-hidden="true"></i> Hire Me</a>
+
+  <!-- FLOATING SIDE QUICK MENU -->
+  <div class="side-quick-menu" id="sideQuickMenu">
+    <button class="side-menu-toggle" id="sideMenuToggle" type="button" title="Quick Pages" aria-label="Quick Pages">
+      <i class="bi bi-three-dots-vertical" aria-hidden="true"></i>
+    </button>
+    <div class="side-menu-dropdown" id="sideMenuDropdown">
+      <div class="side-menu-header">More Pages</div>
+      <a href="{% url 'core:resume' %}"><i class="bi bi-file-earmark-person" aria-hidden="true"></i> Resume</a>
+      <a href="{% url 'core:uses' %}"><i class="bi bi-cpu" aria-hidden="true"></i> Uses</a>
+      <a href="{% url 'core:now' %}"><i class="bi bi-clock-history" aria-hidden="true"></i> Now</a>
+      <a href="{% url 'core:lab' %}"><i class="bi bi-flask" aria-hidden="true"></i> Lab</a>
+      <a href="{% url 'core:privacy' %}"><i class="bi bi-shield-lock" aria-hidden="true"></i> Privacy</a>
+      <a href="/blog/feed.xml" target="_blank"><i class="bi bi-rss" aria-hidden="true"></i> RSS</a>
+    </div>
+  </div>
 
   <nav class="nav-wrap" aria-label="Main navigation">
     <a class="nav-logo" href="{% url 'core:home' %}">
@@ -250,18 +335,7 @@
 
   <footer>
     <div class="footer-brand">Eddy<span>forge</span></div>
-    <nav class="footer-links" aria-label="Footer navigation">
-      <a href="{% url 'core:about' %}">About</a>
-      <a href="{% url 'core:services' %}">Services</a>
-      <a href="{% url 'core:projects' %}">Projects</a>
-      <a href="/resume/">Resume</a>
-      <a href="/uses/">Uses</a>
-      <a href="/now/">Now</a>
-      <a href="/lab/">Lab</a>
-      <a href="/privacy/">Privacy</a>
-      <a href="/blog/feed.xml">RSS</a>
-    </nav>
-    <div class="footer-copy">© {% now "Y" %} Eddyforge</div>
+    <div class="footer-copy">&copy; {% now "Y" %} Eddyforge. Built with Django &amp; Passion.</div>
   </footer>
 
   <script src="{% static 'core/content.js' %}"></script>
@@ -275,6 +349,19 @@
         const open = links.classList.toggle('open');
         toggle.setAttribute('aria-expanded', open);
         toggle.querySelector('i').className = open ? 'bi bi-x' : 'bi bi-list';
+      });
+    }
+
+    // Floating side quick menu toggle logic
+    const sideToggle = document.getElementById('sideMenuToggle');
+    const sideDropdown = document.getElementById('sideMenuDropdown');
+    if (sideToggle && sideDropdown) {
+      sideToggle.addEventListener('click', function(e){
+        e.stopPropagation();
+        sideDropdown.classList.toggle('show');
+      });
+      document.addEventListener('click', function(){
+        sideDropdown.classList.remove('show');
       });
     }
   </script>

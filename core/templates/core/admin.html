@@ -152,14 +152,6 @@
       border:1px solid var(--border); transition:color .15s, border-color .15s;
     }
     .topbar-visit:hover{ color:var(--cyan); border-color:var(--border-h); }
-    .topbar-save{
-      display:flex; align-items:center; gap:6px;
-      font-family:var(--body); font-weight:700; font-size:0.8rem;
-      color:var(--bg); background:var(--cyan); border:none;
-      padding:7px 16px; border-radius:7px; cursor:pointer;
-      transition:box-shadow .2s, transform .2s;
-    }
-    .topbar-save:hover{ box-shadow:0 0 20px var(--cyan-glow); transform:translateY(-1px); }
 
     .sidebar-toggle{
       display:none; background:none; border:1px solid var(--border);
@@ -175,7 +167,7 @@
 
     .stats-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+      grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
       gap:14px; margin-bottom:28px;
     }
     .stat-card{
@@ -231,12 +223,7 @@
     .action-btn:hover{ color:var(--cyan); border-color:var(--border-h); }
     .action-btn.primary{ color:var(--cyan); border-color:var(--border-h); background:var(--cyan-dim); }
 
-    .info-card{
-      background:var(--bg-card); border:1px solid var(--border);
-      border-radius:14px; overflow:hidden;
-    }
-
-    .quick-links{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; }
+    .quick-links{ display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px; }
     .quick-link{
       display:flex; flex-direction:column; align-items:center; gap:9px;
       background:var(--bg-card); border:1px solid var(--border);
@@ -300,15 +287,21 @@
       <div class="sidebar-section-label">Content</div>
       <button class="sidebar-link active" data-panel="dashboard"><i class="bi bi-grid-1x2-fill"></i> Dashboard</button>
       <button class="sidebar-link" data-panel="projects"><i class="bi bi-layers-fill"></i> Projects</button>
+      <button class="sidebar-link" data-panel="posts"><i class="bi bi-newspaper"></i> Blog Posts</button>
+      <button class="sidebar-link" data-panel="now"><i class="bi bi-clock-history"></i> Now Page</button>
       <button class="sidebar-link" data-panel="services"><i class="bi bi-briefcase-fill"></i> Services</button>
+      <button class="sidebar-link" data-panel="lab"><i class="bi bi-flask"></i> Lab</button>
       <button class="sidebar-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Messages</button>
 
       <div class="sidebar-section-label">Portfolio Pages</div>
       <a class="sidebar-link" href="{% url 'core:home' %}" target="_blank"><i class="bi bi-house"></i> Home <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:about' %}" target="_blank"><i class="bi bi-info-circle"></i> About <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:services' %}" target="_blank"><i class="bi bi-gear"></i> Services <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
       <a class="sidebar-link" href="{% url 'core:projects' %}" target="_blank"><i class="bi bi-code-square"></i> Projects <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
-      <a class="sidebar-link" href="{% url 'core:contact' %}" target="_blank"><i class="bi bi-envelope"></i> Contact <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:blog' %}" target="_blank"><i class="bi bi-journal-text"></i> Blog <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:now' %}" target="_blank"><i class="bi bi-clock-history"></i> Now <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:resume' %}" target="_blank"><i class="bi bi-file-earmark-person"></i> Resume <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:uses' %}" target="_blank"><i class="bi bi-cpu"></i> Uses <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:lab' %}" target="_blank"><i class="bi bi-flask"></i> Lab <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
+      <a class="sidebar-link" href="{% url 'core:privacy' %}" target="_blank"><i class="bi bi-shield-lock"></i> Privacy <i class="bi bi-arrow-up-right" style="margin-left:auto;font-size:.65rem;"></i></a>
     </nav>
 
     <div class="sidebar-footer">
@@ -341,16 +334,19 @@
       <div class="panel active" id="panel-dashboard">
         <div class="stats-grid">
           <div class="stat-card"><div class="stat-icon"><i class="bi bi-layers-fill"></i></div><div><div class="stat-value">{{ db_projects.count }}</div><div class="stat-label">Projects</div></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="bi bi-newspaper"></i></div><div><div class="stat-value">{{ recent_posts.count }}</div><div class="stat-label">Posts</div></div></div>
+          <div class="stat-card"><div class="stat-icon"><i class="bi bi-clock-history"></i></div><div><div class="stat-value">LIVE</div><div class="stat-label">Now Status</div></div></div>
           <div class="stat-card"><div class="stat-icon"><i class="bi bi-briefcase-fill"></i></div><div><div class="stat-value">{{ db_services.count }}</div><div class="stat-label">Services</div></div></div>
-          <div class="stat-card"><div class="stat-icon"><i class="bi bi-chat-quote-fill"></i></div><div><div class="stat-value">{{ contact_messages.count }}</div><div class="stat-label">Messages</div></div></div>
-          <div class="stat-card"><div class="stat-icon"><i class="bi bi-shield-check-fill"></i></div><div><div class="stat-value">ON</div><div class="stat-label">Admin Session</div></div></div>
         </div>
 
-        <div class="section-hd"><div><h2>Quick Actions</h2><p>Jump straight to managing your live portfolio database</p></div></div>
+        <div class="section-hd"><div><h2>Quick Actions</h2><p>Jump straight to managing your live content</p></div></div>
         <div class="quick-links">
-          <div class="quick-link" data-panel="projects"><i class="bi bi-layers-fill"></i> Manage Projects</div>
-          <div class="quick-link" data-panel="services"><i class="bi bi-briefcase-fill"></i> Manage Services</div>
-          <div class="quick-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Contact Messages</div>
+          <div class="quick-link" data-panel="projects"><i class="bi bi-layers-fill"></i> Projects</div>
+          <div class="quick-link" data-panel="posts"><i class="bi bi-newspaper"></i> Blog Posts</div>
+          <div class="quick-link" data-panel="now"><i class="bi bi-clock-history"></i> Now Page</div>
+          <div class="quick-link" data-panel="services"><i class="bi bi-briefcase-fill"></i> Services</div>
+          <div class="quick-link" data-panel="lab"><i class="bi bi-flask"></i> Lab</div>
+          <div class="quick-link" data-panel="testimonials"><i class="bi bi-chat-quote-fill"></i> Messages</div>
         </div>
       </div>
 
@@ -376,6 +372,64 @@
             <i class="bi bi-layers"></i>
             <p>No projects found in the database.</p>
             <a href="/admin/core/project/add/" target="_blank" class="save-btn" style="margin-top:12px;"><i class="bi bi-plus-lg"></i> Add First Project</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- BLOG POSTS PANEL -->
+      <div class="panel" id="panel-posts">
+        <div class="section-hd">
+          <div><h2>Blog Posts</h2><p>Write and publish blog articles</p></div>
+          <a href="/admin/core/post/add/" target="_blank" class="save-btn"><i class="bi bi-plus-lg"></i> Create New Post</a>
+        </div>
+        <div class="editor-list">
+          {% for post in recent_posts %}
+          <div class="editor-card">
+            <div class="editor-card-hd">
+              <span class="editor-card-badge">{% if post.is_published %}🟢 Published{% else %}🟠 Draft{% endif %}</span>
+              <a href="/admin/core/post/{{ post.id }}/change/" target="_blank" class="action-btn primary"><i class="bi bi-pencil-square"></i> Edit</a>
+            </div>
+            <div style="color:#fff; font-size:1.1rem; font-weight:700; margin-bottom:6px;">{{ post.title }}</div>
+            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin-bottom:12px;">{{ post.summary|truncatechars:160 }}</p>
+            <div style="font-family:var(--mono); font-size:0.72rem; color:var(--cyan);">Slug: {{ post.slug }}</div>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="bi bi-newspaper"></i>
+            <p>No blog posts published yet.</p>
+            <a href="/admin/core/post/add/" target="_blank" class="save-btn" style="margin-top:12px;"><i class="bi bi-plus-lg"></i> Write First Post</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- NOW PAGE UPDATES PANEL -->
+      <div class="panel" id="panel-now">
+        <div class="section-hd">
+          <div><h2>Now Page Updates</h2><p>Manage what you're currently working on</p></div>
+          <a href="/admin/core/nowupdate/add/" target="_blank" class="save-btn"><i class="bi bi-plus-lg"></i> Create Now Update</a>
+        </div>
+        <div class="editor-list">
+          {% for update in now_updates %}
+          <div class="editor-card">
+            <div class="editor-card-hd">
+              <span class="editor-card-badge">{% if update.is_published %}🟢 Published{% else %}🟠 Draft{% endif %}</span>
+              <a href="/admin/core/nowupdate/{{ update.id }}/change/" target="_blank" class="action-btn primary"><i class="bi bi-pencil-square"></i> Edit Update</a>
+            </div>
+            <div style="color:#fff; font-size:1.05rem; font-weight:700; margin-bottom:6px;">
+              Now Update — {{ update.updated_at|date:"Y-m-d" }}
+            </div>
+            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6; margin-bottom:12px;">
+              {{ update.body|striptags|truncatechars:160 }}
+            </p>
+            <div style="font-family:var(--mono); font-size:0.72rem; color:var(--cyan);">Last Updated: {{ update.updated_at|date:"M d, Y H:i" }}</div>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="bi bi-clock-history"></i>
+            <p>No update for the Now page yet.</p>
+            <a href="/admin/core/nowupdate/add/" target="_blank" class="save-btn" style="margin-top:12px;"><i class="bi bi-plus-lg"></i> Add First Update</a>
           </div>
           {% endfor %}
         </div>
@@ -407,7 +461,33 @@
         </div>
       </div>
 
-      <!-- TESTIMONIALS / MESSAGES PANEL -->
+      <!-- LAB EXPERIMENTS PANEL -->
+      <div class="panel" id="panel-lab">
+        <div class="section-hd">
+          <div><h2>Lab Experiments</h2><p>Manage code experiments and lab items</p></div>
+          <a href="/admin/core/labexperiment/add/" target="_blank" class="save-btn"><i class="bi bi-plus-lg"></i> Add Experiment</a>
+        </div>
+        <div class="editor-list">
+          {% for exp in lab_experiments %}
+          <div class="editor-card">
+            <div class="editor-card-hd">
+              <span class="editor-card-badge">{% if exp.is_published %}🟢 Published{% else %}🟠 Draft{% endif %}</span>
+              <a href="/admin/core/labexperiment/{{ exp.id }}/change/" target="_blank" class="action-btn primary"><i class="bi bi-pencil-square"></i> Edit</a>
+            </div>
+            <div style="color:#fff; font-size:1.1rem; font-weight:700; margin-bottom:6px;">{{ exp.title }}</div>
+            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6;">{{ exp.summary|truncatechars:160 }}</p>
+          </div>
+          {% empty %}
+          <div class="empty-state">
+            <i class="bi bi-flask"></i>
+            <p>No lab experiments added yet.</p>
+            <a href="/admin/core/labexperiment/add/" target="_blank" class="save-btn" style="margin-top:12px;"><i class="bi bi-plus-lg"></i> Add Experiment</a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- CONTACT MESSAGES PANEL -->
       <div class="panel" id="panel-testimonials">
         <div class="section-hd">
           <div><h2>Contact Messages</h2><p>Inquiries received from potential clients</p></div>
@@ -436,7 +516,6 @@
 </div>
 
 <script>
-  // Simple tab switching for sidebar panels
   document.querySelectorAll('.sidebar-link, .quick-link').forEach(btn => {
     btn.addEventListener('click', (e) => {
       const panelId = btn.getAttribute('data-panel');
@@ -446,7 +525,7 @@
       if (activeLink) activeLink.classList.add('active');
       document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
       document.getElementById(`panel-${panelId}`).classList.add('active');
-      const titles = { dashboard: 'Dashboard / Overview', projects: 'Content / Projects', services: 'Content / Services', testimonials: 'Content / Messages' };
+      const titles = { dashboard: 'Dashboard / Overview', projects: 'Content / Projects', posts: 'Content / Blog Posts', now: 'Content / Now Updates', services: 'Content / Services', lab: 'Content / Lab Experiments', testimonials: 'Content / Messages' };
       document.getElementById('topbarTitle').innerHTML = (titles[panelId] || 'Admin').split('/')[0] + `<span>/ ${(titles[panelId] || '').split('/')[1] || ''}</span>`;
       document.getElementById('sidebar').classList.remove('open');
       document.getElementById('sidebarOverlay').classList.remove('show');

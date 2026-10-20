@@ -110,13 +110,12 @@ def contact(request):
 
 @staff_member_required
 def admin_page(request):
-    # Fetch real database records
     db_projects = Project.objects.all().order_by("display_order", "-id")
     db_services = Service.objects.all().order_by("display_order", "-id")
     contact_messages = ContactMessage.objects.order_by("-created_at")
-    client_projects = ClientProject.objects.prefetch_related("milestones").all()
-    lab_experiments = LabExperiment.objects.order_by("display_order", "-id")
-    recent_posts = Post.objects.order_by("-published_at", "-id")
+    recent_posts = Post.objects.all().order_by("-published_at", "-id")
+    lab_experiments = LabExperiment.objects.all().order_by("display_order", "-id")
+    now_updates = NowUpdate.objects.all()
 
     return render(
         request,
@@ -130,9 +129,9 @@ def admin_page(request):
             "db_projects": db_projects,
             "db_services": db_services,
             "contact_messages": contact_messages,
-            "projects": client_projects,
-            "lab_experiments": lab_experiments,
             "recent_posts": recent_posts,
+            "lab_experiments": lab_experiments,
+            "now_updates": now_updates,
         },
     )
 
@@ -438,18 +437,17 @@ def uses(request):
 
 
 def now(request):
-    update = NowUpdate.objects.filter(is_published=True).first()
+    current_update = NowUpdate.objects.filter(is_published=True).first()
     return render(
         request,
         "core/now.html",
         {
             **page_context(
                 request,
-                "Now | Eddyforge",
-                "A short update on what Johnny Edwards is working on now.",
+                "What I'm Doing Now | Eddyforge",
+                "A short, occasional update on current work, projects, and focus areas.",
             ),
-            "now_update": update,
-            "rendered_update": render_markdown(update.body) if update else None,
+            "current_update": current_update,
         },
     )
 
