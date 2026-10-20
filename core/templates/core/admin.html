@@ -487,26 +487,51 @@
         </div>
       </div>
 
-      <!-- CONTACT MESSAGES PANEL -->
+      <!-- CONTACT MESSAGES / PROJECT INQUIRIES PANEL -->
       <div class="panel" id="panel-testimonials">
         <div class="section-hd">
-          <div><h2>Contact Messages</h2><p>Inquiries received from potential clients</p></div>
+          <div><h2>Project Inquiries</h2><p>Submissions received from your website start form</p></div>
         </div>
         <div class="editor-list">
-          {% for msg in contact_messages %}
+          {% for msg in project_inquiries %}
           <div class="editor-card">
             <div class="editor-card-hd">
-              <span class="editor-card-badge">{{ msg.service_needed|default:"General Inquiry" }}</span>
+              <span class="editor-card-badge">{{ msg.get_project_type_display|default:msg.project_type|default:"Project Inquiry" }}</span>
               <span style="font-family:var(--mono); font-size:0.7rem; color:var(--muted);">{{ msg.created_at|date:"M d, Y H:i" }}</span>
             </div>
-            <div style="color:#fff; font-size:1rem; font-weight:700; margin-bottom:4px;">{{ msg.first_name }} {{ msg.last_name }} <span style="font-size:0.8rem; color:var(--cyan); font-weight:400;">({{ msg.email }})</span></div>
-            <p style="color:var(--muted); font-size:0.88rem; line-height:1.6;">{{ msg.project_brief }}</p>
+            <div style="color:#fff; font-size:1rem; font-weight:700; margin-bottom:4px;">
+              {{ msg.name }} <span style="font-size:0.8rem; color:var(--cyan); font-weight:400;">({{ msg.email }})</span>
+            </div>
+            <p style="color:var(--muted); font-size:0.85rem; line-height:1.6; margin-bottom: 8px;">
+              {% if msg.company %}<strong>Company:</strong> {{ msg.company }} | {% endif %}
+              <strong>Budget:</strong> {{ msg.get_budget_range_display|default:msg.budget_range }} | 
+              <strong>Timeline:</strong> {{ msg.get_timeline_display|default:msg.timeline }}
+            </p>
+            <p style="color:var(--text); font-size:0.88rem; line-height:1.6; margin-bottom:6px;">
+              {{ msg.description }}
+            </p>
+            {% if msg.reference_links %}
+            <div style="font-size:0.78rem; color:var(--cyan); font-family:var(--mono); margin-top:6px;">
+              <strong>Links:</strong> {{ msg.reference_links|linebreaksbr }}
+            </div>
+            {% endif %}
           </div>
           {% empty %}
-          <div class="empty-state">
-            <i class="bi bi-chat-quote"></i>
-            <p>No contact messages received yet.</p>
-          </div>
+            {% for msg in contact_messages %}
+            <div class="editor-card">
+              <div class="editor-card-hd">
+                <span class="editor-card-badge">{{ msg.service_needed|default:"General Inquiry" }}</span>
+                <span style="font-family:var(--mono); font-size:0.7rem; color:var(--muted);">{{ msg.created_at|date:"M d, Y H:i" }}</span>
+              </div>
+              <div style="color:#fff; font-size:1rem; font-weight:700; margin-bottom:4px;">{{ msg.first_name }} {{ msg.last_name }} <span style="font-size:0.8rem; color:var(--cyan); font-weight:400;">({{ msg.email }})</span></div>
+              <p style="color:var(--muted); font-size:0.88rem; line-height:1.6;">{{ msg.project_brief }}</p>
+            </div>
+            {% empty %}
+            <div class="empty-state">
+              <i class="bi bi-chat-quote"></i>
+              <p>No project inquiries received yet.</p>
+            </div>
+            {% endfor %}
           {% endfor %}
         </div>
       </div>

@@ -26,6 +26,7 @@ from .models import (
     NowUpdate,
     Post,
     Project,
+    ProjectInquiry,
     Service,
     SharedLink,
 )
@@ -112,7 +113,13 @@ def contact(request):
 def admin_page(request):
     db_projects = Project.objects.all().order_by("display_order", "-id")
     db_services = Service.objects.all().order_by("display_order", "-id")
-    contact_messages = ContactMessage.objects.order_by("-created_at")
+
+    # Fetch ProjectInquiry submissions from your start form
+    project_inquiries = ProjectInquiry.objects.all().order_by("-created_at")
+
+    # Fallback to ContactMessage if any exist
+    contact_messages = ContactMessage.objects.all().order_by("-created_at")
+
     recent_posts = Post.objects.all().order_by("-published_at", "-id")
     lab_experiments = LabExperiment.objects.all().order_by("display_order", "-id")
     now_updates = NowUpdate.objects.all()
@@ -128,13 +135,13 @@ def admin_page(request):
             ),
             "db_projects": db_projects,
             "db_services": db_services,
+            "project_inquiries": project_inquiries,
             "contact_messages": contact_messages,
             "recent_posts": recent_posts,
             "lab_experiments": lab_experiments,
             "now_updates": now_updates,
         },
     )
-
 
 def login(request):
     return redirect("core:portal_login")
