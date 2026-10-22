@@ -1,4 +1,5 @@
 import os
+import shutil
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -81,6 +82,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "eddyforge_project.wsgi.application"
 ASGI_APPLICATION = "eddyforge_project.asgi.application"
 
+# DATABASE CONFIGURATION
 DATABASE_URL = os.environ.get("DATABASE_URL")
 if DATABASE_URL:
     import dj_database_url
@@ -95,10 +97,20 @@ if DATABASE_URL:
     if DATABASES["default"]["ENGINE"] == "django.db.backends.postgresql":
         DATABASES["default"]["DISABLE_SERVER_SIDE_CURSORS"] = True
 else:
+    # If running on Vercel without a DATABASE_URL env var, copy db.sqlite3 to writable /tmp/
+    if os.environ.get("VERCEL"):
+        tmp_db = Path("/tmp/db.sqlite3")
+        repo_db = BASE_DIR / "db.sqlite3"
+        if repo_db.exists() and not tmp_db.exists():
+            shutil.copyfile(repo_db, tmp_db)
+        db_path = tmp_db
+    else:
+        db_path = BASE_DIR / "db.sqlite3"
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
+            "NAME": db_path,
         }
     }
 
