@@ -1,0 +1,178 @@
+[
+{
+    "model": "core.project",
+    "pk": 1,
+    "fields": {
+        "title": "Eddyforge - Full-Stack Web Engineering & Platform Solutions",
+        "slug": "eddyforge-full-stack-web-engineering-platform-solutions",
+        "short_title": "Eddyforge",
+        "badge": "Full Stack",
+        "badge_icon": "bi-layers",
+        "description": "Eddyforge is a robust full-stack web engineering platform designed to build scalable, high-performance web applications. It brings together modular backend architectures built on Django and Python with responsive, modern frontend interfaces. Built to handle end-to-end web workflows, Eddyforge integrates relational database solutions, secure RESTful API architectures, and automated M-Pesa payment gateways",
+        "short_description": "A high-performance web development platform delivering scalable backend architecture, responsive design, and seamless payment API integrations.",
+        "highlights": [
+            "Full-stack architecture powered by Python & Django",
+            "Responsive, dynamic frontend built with Bootstrap & JavaScript",
+            "Seamless payment processing via M-Pesa Daraja API integration",
+            "Relational database management with PostgreSQL & SQLite",
+            "Version-controlled deployment and RESTful API endpoints"
+        ],
+        "repo": "https://github.com/edujoew/eddyforge",
+        "icon": "bi-code-square",
+        "icon_label": "Web Platform",
+        "accent": "#0d6efd",
+        "image_first": false,
+        "is_published": true,
+        "role": "Lead Full-Stack Developer & Designer",
+        "year": 2026,
+        "duration": "3 Months",
+        "live_url": "",
+        "problem": "Modern web solutions often suffer from disconnected architecture between frontend interfaces and backend business logic, leading to slow load times, poor securit",
+        "approach": "Leveraged Django's MVT pattern for clean logic separation, created modular frontend components using Bootstrap and JavaScript, and designed a robust database schema using PostgreSQL. Integrated M-Pesa's Daraja API with asynchronous request logging to ensure reliable mobile money transactions.",
+        "results": "Achieved an optimized web application with sub-second page loads, fully responsive mobile layout, and zero-failure rate for automated payment transactions.",
+        "stack": "[\"Python\", \"Django\", \"HTML5\", \"CSS3\", \"JavaScript\", \"Bootstrap\", \"PostgreSQL\", \"SQLite\", \"M-Pesa API\", \"Git/GitHub\"]",
+        "cover": "/static/images/projects/eddyforge-cover.png",
+        "display_order": 1,
+        "created_at": "2026-10-20T10:13:36.357Z",
+        "updated_at": "2026-10-20T10:13:36.357Z"
+    }
+},
+{
+    "model": "core.service",
+    "pk": 1,
+    "fields": {
+        "title": "Full-Stack Web Development & Engineering",
+        "slug": "full-stack-web-development-engineering",
+        "description": "End-to-end full-stack web applications designed for performance, security, and smooth user experience using Django, Bootstrap, and relational databases.",
+        "long_description": "We design, build, and deploy custom full-stack web applications tailored to your business needs. From architecting scalable backend systems with Django and Python to crafting modern, dynamic frontend interfaces with Bootstrap and JavaScript, Eddyforge delivers enterprise-grade web engineering. Our services cover database management (PostgreSQL/SQLite), RESTful API integration, and automated payment workflows like M-Pesa Daraja API.",
+        "icon": "bi-laptop",
+        "tech": "[\"Python\", \"Django\", \"HTML5\", \"CSS3\", \"JavaScript\", \"Bootstrap\", \"PostgreSQL\", \"SQLite\", \"REST API\", \"M-Pesa API\", \"Git/GitHub\"]",
+        "tags": [
+            "Web Development",
+            "Full-Stack",
+            "Django",
+            "Python",
+            "API Integration",
+            "Database Design",
+            "M-Pesa Integration"
+        ],
+        "is_published": true,
+        "meta_title": "Full-Stack Web Development & Engineering Services | Eddyforge",
+        "meta_description": "Custom web application development using Python, Django, Bootstrap, and M-Pesa API integration. Modern, scalable, and responsive solutions by Eddyforge.",
+        "intro": "Transforming complex digital ideas into fully functional, high-performance web applications.",
+        "deliverables": "[\r\n  \"Custom responsive frontend UI/UX design using Bootstrap & CSS\",\r\n  \"Scalable Django backend logic & modular application architecture\",\r\n  \"Relational database schema design (PostgreSQL / SQLite)\",\r\n  \"Secure RESTful API development & M-Pesa payment integration\",\r\n  \"Deployment, environment configuration, & source code delivery\"\r\n]",
+        "timeline": "2 - 4 Weeks",
+        "display_order": 0,
+        "created_at": "2026-10-20T12:40:39.462Z",
+        "updated_at": "2026-10-20T12:40:39.462Z",
+        "related_projects": []
+    }
+},
+{
+    "model": "core.servicefaq",
+    "pk": 1,
+    "fields": {
+        "service": 1,
+        "question": "What tech stack do you use for web projects?",
+        "answer": "We primarily utilize Python and Django for backend architecture, paired with HTML, CSS, JavaScript, and Bootstrap for frontend design, and PostgreSQL or SQLite for database management.",
+        "order": 0
+    }
+},
+{
+    "model": "core.servicefaq",
+    "pk": 2,
+    "fields": {
+        "service": 1,
+        "question": "Can you integrate mobile payments like M-Pesa?",
+        "answer": "Yes, we specialize in integrating M-Pesa Daraja API for STK Push automated payment flows, callback handlers, and transaction processing.",
+        "order": 0
+    }
+},
+{
+    "model": "core.projectinquiry",
+    "pk": 1,
+    "fields": {
+        "name": "John Edwards",
+        "email": "johnteedushiks247@gmail.com",
+        "company": "Eddytech",
+        "project_type": "e_commerce",
+        "budget_range": "under_500",
+        "timeline": "flexible",
+        "description": "working site",
+        "reference_links": "",
+        "status": "new",
+        "created_at": "2026-10-17T22:18:39.494Z"
+    }
+},
+{
+    "model": "core.projectinquiry",
+    "pk": 2,
+    "fields": {
+        "name": "John Edwards",
+        "email": "johnteedushiks247@gmail.com",
+        "company": "Eddytech",
+        "project_type": "ui_ux",
+        "budget_range": "under_500",
+        "timeline": "under_2_weeks",
+        "description": "a clean website",
+        "reference_links": "",
+        "status": "new",
+        "created_at": "2026-10-20T13:40:03.177Z"
+    }
+},
+{
+    "model": "core.projectinquiry",
+    "pk": 3,
+    "fields": {
+        "name": "John Edwards",
+        "email": "johnteedushiks247@gmail.com",
+        "company": "Edyf",
+        "project_type": "corporate_web",
+        "budget_range": "1500_5000",
+        "timeline": "flexible",
+        "description": "seo",
+        "reference_links": "",
+        "status": "new",
+        "created_at": "2026-10-20T17:37:44.140Z"
+    }
+},
+{
+    "model": "core.post",
+    "pk": 1,
+    "fields": {
+        "title": "Building Scalable Web Applications with Python, Django, and Modern UI Frameworks",
+        "slug": "building-scalable-web-applications-django-python",
+        "excerpt": "Explore best practices for building secure, high-performance web applications using Python, Django, Bootstrap, and integrating real-world payment gateways like M-Pesa.",
+        "body": "## Introduction\r\nWhen building modern web applications, developers often face the challenge of bridging robust backend architecture with responsive, user-friendly frontend interfaces. At **Eddyforge**, we focus on creating seamless web solutions that combine the power of Python and Django with clean UI design.\r\n\r\n---\r\n\r\n## Why Django for Backend Architecture?\r\nPython and Django provide an incredible ecosystem for rapid full-stack development. \r\n* **Built-in Security:** Django handles SQL injection, cross-site scripting (XSS), and CSRF protection out of the box.\r\n* **ORM Capabilities:** Managing relational databases like PostgreSQL and SQLite is streamlined through Django's powerful ORM.\r\n* **Scalability:** The MVT (Model-View-Template) pattern enforces clean code separation, making it easier to scale applications as user traffic grows.\r\n\r\n---\r\n\r\n## Crafting Responsive Frontends\r\nA great backend means little if the user experience is clunky. Pairing Django templates with **Bootstrap, HTML5, and JavaScript** allows developers to build dynamic layouts that look stunning on both mobile devices and desktop screens. \r\n\r\n---\r\n\r\n## Integrating M-Pesa Payments\r\nFor applications operating within regions relying heavily on mobile money, integrating financial APIs is crucial. Utilizing the **M-Pesa Daraja API** enables automated STK pushes, real-time transaction processing, and secure callback logging directly inside your web app.\r\n\r\n---\r\n\r\n## Conclusion\r\nBuilding a successful digital platform requires a balanced approach to backend security, database optimization, and responsive design. By leveraging the right tools—from Python and Django to modern frontend frameworks—developers can deliver enterprise-grade applications efficiently.",
+        "tags": "Django\r\nPython\r\nWeb Development\r\nFull Stack\r\nM-Pesa API\r\nBootstrap",
+        "cover": "/static/images/blog/scalable-web-apps-cover.png",
+        "is_published": true,
+        "published_at": "2026-10-20T12:53:38Z",
+        "created_at": "2026-10-20T12:53:43.187Z",
+        "updated_at": "2026-10-20T13:01:59.100Z"
+    }
+},
+{
+    "model": "core.nowupdate",
+    "pk": 2,
+    "fields": {
+        "body": "* Designing and implementing key features for the PlastOut digital platform to enhance user experience and functional performance.\r\n* Structuring backend models and views using Python and Django to maintain clean, scalable application architecture.\r\n* Building intuitive, mobile-responsive user interfaces with HTML, CSS, JavaScript, and Bootstrap.\r\n* Managing database connections and queries using SQLite and PostgreSQL to ensure efficient data processing.\r\n* Setting up API endpoints and workflow integrations for seamless data exchange across the platform.",
+        "is_published": true,
+        "updated_at": "2026-10-20T13:16:49.605Z"
+    }
+},
+{
+    "model": "core.labexperiment",
+    "pk": 1,
+    "fields": {
+        "title": "JSON Formatter & Validator",
+        "slug": "json-formatter-validator",
+        "summary": "A lightweight browser-based utility for developers to instantly format, validate, and clean raw JSON and API response payloads.",
+        "demo_path": "https://jsonplaceholder.typicode.com/posts/1",
+        "repo_url": "https://github.com",
+        "tags": "Developer Tools\r\nJavaScript\r\nJSON\r\nUtilities",
+        "is_published": true,
+        "display_order": 0
+    }
+}
+]
